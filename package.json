@@ -22,7 +22,7 @@
     "lint:fix": "npm run lint -- --fix",
     "lint": "eslint --ext=js,mjs,cjs,ts,tsx .",
     "prepublish": "not-in-publish || npm run prepublishOnly",
-    "prepublishOnly": "safe-publish-latest && npm run lint && npm run flow && npm run jest",
+    "prepublishOnly": "safe-publish-latest && npm run lint && npm run jest",
     "jest": "jest --coverage src/**/*.test.tsx",
     "posttest": "aud --production",
     "version": "auto-changelog && git add CHANGELOG.md",
@@ -31,6 +31,7 @@
   "author": "Gabriel Taveira",
   "license": "MIT",
   "devDependencies": {
+    "npmignore": "^0.3.0",
     "safe-publish-latest": "^2.0.0",
     "aud": "^2.0.2",
     "semver": "^6.3.0",
