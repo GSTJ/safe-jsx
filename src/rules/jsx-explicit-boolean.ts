@@ -32,12 +32,9 @@ export default {
           left.callee.name === "Boolean";
         if (isNewBooleanObject) return;
 
-        const isDoubleNegation =
-          left.type === "UnaryExpression" &&
-          left.operator === "!" &&
-          left.argument.type === "UnaryExpression" &&
-          left.argument.operator === "!";
-        if (isDoubleNegation) return;
+        const isNegation =
+          left.type === "UnaryExpression" && left.operator === "!";
+        if (isNegation) return;
 
         const isBooleanLiteral =
           left.type === "Literal" && typeof left.value === "boolean";

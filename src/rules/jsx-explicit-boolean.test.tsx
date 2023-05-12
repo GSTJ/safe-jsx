@@ -35,6 +35,9 @@ ruleTester.run("jsx-explicit-boolean", jsxExplicitBooleanRule, {
     {
       code: "const Component = ({ a }) => <View>{!!a && <Text>{a}</Text>}</View>;",
     },
+    {
+      code: "const Component = ({ a }) => <View>{!a && <Text>{a}</Text>}</View>;",
+    },
   ],
   invalid: [
     {
