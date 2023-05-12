@@ -68,7 +68,7 @@ Then configure the rules you want to use under the rules section.
 
 ## 📚 Supported Rules
 
-- boolean-conversion: Enforces explicit boolean conversion before using the && operator with JSX.
+- jsx-explicit-boolean: Enforces explicit boolean conversion before using the && operator with JSX.
 
 ## 🤝 Contributing
 
