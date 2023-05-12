@@ -38,10 +38,10 @@ Next, install `eslint-plugin-safe-jsx`:
 
 ```sh
 # npm
-npm install eslint-plugin-jsx-a11y --save-dev
+npm install eslint-plugin-safe-jsx --save-dev
 
 # yarn
-yarn add eslint-plugin-jsx-a11y --dev
+yarn add eslint-plugin-safe-jsx --dev
 ```
 
 **Note:** If you installed ESLint globally (using the `-g` flag in npm, or the `global` prefix in yarn) then you must also install `eslint-plugin-safe-jsx` globally.
