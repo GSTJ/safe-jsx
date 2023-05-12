@@ -1,8 +1,9 @@
 {
   "root": true,
-  "extends": ["airbnb-base"],
+  "extends": ["airbnb-base", "plugin:prettier/recommended"],
   "ignorePatterns": ["lib/", "reports/"],
-  "parser": "@babel/eslint-parser",
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
     "max-len": "off",
     "no-template-curly-in-string": "off",
@@ -21,11 +22,11 @@
       }
     },
     {
-      "files": ["__tests__/src/rules/*.js"],
+      "files": ["__tests__/src/rules/*.{js,ts,jsx,tsx}"],
       "extends": ["plugin:eslint-plugin/tests-recommended"]
     },
     {
-      "files": ["__tests__/**/*"],
+      "files": ["**/*.test.{js,ts,jsx,tsx}"],
       "env": {
         "jest": true
       }
