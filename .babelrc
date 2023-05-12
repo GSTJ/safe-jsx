@@ -1,0 +1,13 @@
+{
+  "presets": [
+    [
+      "airbnb",
+      {
+        "targets": {
+          "node": 4
+        }
+      }
+    ]
+  ],
+  "plugins": ["add-module-exports"]
+}

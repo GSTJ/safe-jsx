@@ -1,0 +1,34 @@
+{
+  "root": true,
+  "extends": ["airbnb-base"],
+  "ignorePatterns": ["lib/", "reports/"],
+  "parser": "@babel/eslint-parser",
+  "rules": {
+    "max-len": "off",
+    "no-template-curly-in-string": "off",
+    "global-require": "off"
+  },
+  "overrides": [
+    {
+      "files": ["src/rules/*"],
+      "extends": ["plugin:eslint-plugin/rules-recommended"],
+      "rules": {
+        "eslint-plugin/require-meta-docs-description": [
+          "error",
+          { "pattern": "^(Enforce|Require|Disallow)" }
+        ],
+        "eslint-plugin/require-meta-type": "off"
+      }
+    },
+    {
+      "files": ["__tests__/src/rules/*.js"],
+      "extends": ["plugin:eslint-plugin/tests-recommended"]
+    },
+    {
+      "files": ["__tests__/**/*"],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
+}
