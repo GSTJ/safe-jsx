@@ -1,5 +1,4 @@
 import { TSESLint } from "@typescript-eslint/experimental-utils";
-import jsxExplicitBooleanRule from "./jsx-explicit-boolean";
 
 const parser = require.resolve("@typescript-eslint/parser");
 
@@ -19,7 +18,7 @@ const ruleTester = new TSESLint.RuleTester({
   parserOptions,
 });
 
-ruleTester.run("jsx-explicit-boolean", jsxExplicitBooleanRule, {
+ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
   valid: [
     { code: "const a = true; a && <div />;" },
     { code: "const a = false; a && <div />;" },

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   meta: {
     type: "suggestion",
     fixable: "code",

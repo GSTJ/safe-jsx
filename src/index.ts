@@ -1,8 +1,6 @@
-import jsxExplicitBoolean from "./rules/jsx-explicit-boolean";
-
-export default {
+module.exports = {
   rules: {
-    "jsx-explicit-boolean": jsxExplicitBoolean,
+    "jsx-explicit-boolean": require("./rules/jsx-explicit-boolean"),
   },
 
   configs: {
