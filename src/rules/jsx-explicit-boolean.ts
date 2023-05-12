@@ -15,16 +15,22 @@ function checkBooleanValidity(node, context) {
               typeof def.node.init.value === "boolean"
           )
       );
+
   const isComplexLogicalExpression =
     node.type === "LogicalExpression" &&
     checkBooleanValidity(node.left, context) &&
     checkBooleanValidity(node.right, context);
 
+  const isBooleanResultBinaryExpression =
+    node.type === "BinaryExpression" &&
+    ["===", "!==", ">", "<", ">=", "<="].includes(node.operator);
+
   return (
     isNegation ||
     isBooleanLiteral ||
     isBooleanVariable ||
-    isComplexLogicalExpression
+    isComplexLogicalExpression ||
+    isBooleanResultBinaryExpression
   );
 }
 

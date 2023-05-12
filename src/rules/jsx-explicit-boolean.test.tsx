@@ -46,6 +46,9 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
     {
       code: "const a = 1; b = '0'; c = '0'; <View>{!!a && !!b && !!c && <Text />}</View>;",
     },
+    {
+      code: "{!!step.subtitle && index === activeStep - 1 && <Text />}",
+    },
   ],
   invalid: [
     {
@@ -99,6 +102,12 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
       errors: [{ messageId: "booleanConversion" }],
       output:
         "const a = 1; b = '0'; <View>{Boolean(!!a && b) && <Text />}</View>;",
+    },
+    {
+      code: "const a = 1; const b = '0'; const c = 0; <View>{a && !!b && !!c && <Text />}</View>;",
+      errors: [{ messageId: "booleanConversion" }],
+      output:
+        "const a = 1; const b = '0'; const c = 0; <View>{Boolean(a && !!b && !!c) && <Text />}</View>;",
     },
   ],
 });
