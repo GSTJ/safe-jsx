@@ -26,6 +26,19 @@ export default {
           left.callee.name === "Boolean";
         if (isExplicitBooleanConversion) return;
 
+        const isNewBooleanObject =
+          left.type === "NewExpression" &&
+          left.callee.type === "Identifier" &&
+          left.callee.name === "Boolean";
+        if (isNewBooleanObject) return;
+
+        const isDoubleNegation =
+          left.type === "UnaryExpression" &&
+          left.operator === "!" &&
+          left.argument.type === "UnaryExpression" &&
+          left.argument.operator === "!";
+        if (isDoubleNegation) return;
+
         const isBooleanLiteral =
           left.type === "Literal" && typeof left.value === "boolean";
         if (isBooleanLiteral) return;

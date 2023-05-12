@@ -26,6 +26,15 @@ ruleTester.run("jsx-explicit-boolean", jsxExplicitBooleanRule, {
     { code: "const a = true; Boolean(a) && <div />;" },
     { code: "const a = false; Boolean(a) && <div />;" },
     { code: "const a = 1; Boolean(a) && <div />;" },
+    {
+      code: "const Component = ({ a }) => <View>{Boolean(a) && <Text>{a}</Text>}</View>;",
+    },
+    {
+      code: "const Component = ({ a }) => <View>{new Boolean(a) && <Text>{a}</Text>}</View>;",
+    },
+    {
+      code: "const Component = ({ a }) => <View>{!!a && <Text>{a}</Text>}</View>;",
+    },
   ],
   invalid: [
     {
