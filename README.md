@@ -6,7 +6,7 @@
 
 Consider the following example:
 
-```js
+```jsx
 const myText = 0;
 myText && <Text>{myText}</Text>;
 ```
@@ -15,7 +15,7 @@ In this scenario, the code breaks because 0 is rendered outside the text compone
 
 With eslint-plugin-safe-jsx, your code will alert you of such potential errors and can be auto-fixed by ESLint, like so:
 
-```js
+```jsx
 const myText = 0;
 Boolean(myText) && <Text>{myText}</Text>;
 ```
