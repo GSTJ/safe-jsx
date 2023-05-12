@@ -24,8 +24,6 @@ For more examples, check out our [test cases](./src/rules/jsx-explicit-boolean.t
 
 ## 🚀 Installation
 
-**If you are installing this plugin via `eslint-config-airbnb`, please follow [these instructions](https://github.com/airbnb/javascript/tree/HEAD/packages/eslint-config-airbnb#eslint-config-airbnb-1).**
-
 You'll first need to install [ESLint](https://eslint.org/docs/latest/user-guide/getting-started):
 
 ```sh
@@ -50,11 +48,11 @@ yarn add eslint-plugin-jsx-a11y --dev
 
 ## ⚙️ Usage
 
-Add `eslint-plugin-safe-jsx` to the plugins section of your `.eslintrc` configuration file.
+Add `safe-jsx` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
 
 ```json
 {
-  "plugins": ["eslint-plugin-safe-jsx"]
+  "plugins": ["safe-jsx"]
 }
 ```
 
@@ -63,7 +61,7 @@ Then configure the rules you want to use under the rules section.
 ```json
 {
   "rules": {
-    "eslint-plugin-safe-jsx/jsx-explicit-boolean": "error" // or "warn"
+    "safe-jsx/jsx-explicit-boolean": "error" // or "warn"
   }
 }
 ```

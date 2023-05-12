@@ -5,26 +5,26 @@ module.exports = {
 
   configs: {
     recommended: {
-      plugins: ['@gstj'],
+      plugins: ['safe-jsx'],
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
         },
       },
       rules: {
-        '@gstj/jsx-explicit-boolean': 'error',
+        'safe-jsx/jsx-explicit-boolean': 'error',
       },
     },
 
     strict: {
-      plugins: ['@gstj'],
+      plugins: ['safe-jsx'],
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
         },
       },
       rules: {
-        '@gstj/jsx-explicit-boolean': 'error',
+        'safe-jsx/jsx-explicit-boolean': 'error',
       },
     },
   },
