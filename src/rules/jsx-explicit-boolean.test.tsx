@@ -37,6 +37,12 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
     {
       code: "const Component = ({ a }) => <View>{!a && <Text>{a}</Text>}</View>;",
     },
+    {
+      code: "const index = 1; <View>{index === 0 && <Text />}</View>;",
+    },
+    {
+      code: "const a = 1; b = '0'; <View>{!!a && !!b && <Text />}</View>;",
+    },
   ],
   invalid: [
     {
@@ -84,6 +90,12 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
       errors: [{ messageId: "booleanConversion" }],
       output:
         "const Component = ({ a }) => <View>{Boolean(a) && <Text>{a}</Text>}</View>;",
+    },
+    {
+      code: "const a = 1; b = '0'; <View>{!!a && b && <Text />}</View>;",
+      errors: [{ messageId: "booleanConversion" }],
+      output:
+        "const a = 1; b = '0'; <View>{Boolean(!!a && b) && <Text />}</View>;",
     },
   ],
 });

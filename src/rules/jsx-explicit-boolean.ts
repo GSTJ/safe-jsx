@@ -1,3 +1,23 @@
+function checkBooleanValidity(node, context) {
+  const isNegation = node.type === "UnaryExpression" && node.operator === "!";
+  const isBooleanLiteral =
+    node.type === "Literal" && typeof node.value === "boolean";
+  const isBooleanVariable =
+    node.type === "Identifier" &&
+    context
+      .getScope()
+      .variables.some(
+        (variable) =>
+          variable.name === node.name &&
+          variable.defs.some(
+            (def) =>
+              def.type === "Variable" &&
+              typeof def.node.init.value === "boolean"
+          )
+      );
+  return isNegation || isBooleanLiteral || isBooleanVariable;
+}
+
 module.exports = {
   meta: {
     type: "suggestion",
@@ -20,26 +40,44 @@ module.exports = {
 
         const { left } = node;
 
+        // Boolean(a) && <JSX />
         const isExplicitBooleanConversion =
           left.type === "CallExpression" &&
           left.callee.type === "Identifier" &&
           left.callee.name === "Boolean";
         if (isExplicitBooleanConversion) return;
 
+        // new Boolean(a) && <JSX />
         const isNewBooleanObject =
           left.type === "NewExpression" &&
           left.callee.type === "Identifier" &&
           left.callee.name === "Boolean";
         if (isNewBooleanObject) return;
 
+        // !a && <JSX /> | !!a && <JSX />
         const isNegation =
           left.type === "UnaryExpression" && left.operator === "!";
         if (isNegation) return;
 
+        // true && <JSX />
         const isBooleanLiteral =
           left.type === "Literal" && typeof left.value === "boolean";
         if (isBooleanLiteral) return;
 
+        // a === true && <JSX />
+        const isBooleanBinaryExpression =
+          left.type === "BinaryExpression" &&
+          ["===", "!==", ">", "<", ">=", "<="].includes(left.operator);
+        if (isBooleanBinaryExpression) return;
+
+        // !!a && !!b && <JSX />
+        const isComplexLogicalExpression =
+          left.type === "LogicalExpression" &&
+          checkBooleanValidity(left.left, context) &&
+          checkBooleanValidity(left.right, context);
+        if (isComplexLogicalExpression) return;
+
+        // const a = true; a && <JSX />
         const isBooleanVariable =
           left.type === "Identifier" &&
           context
