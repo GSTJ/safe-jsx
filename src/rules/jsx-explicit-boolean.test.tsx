@@ -43,6 +43,9 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
     {
       code: "const a = 1; b = '0'; <View>{!!a && !!b && <Text />}</View>;",
     },
+    {
+      code: "const a = 1; b = '0'; c = '0'; <View>{!!a && !!b && !!c && <Text />}</View>;",
+    },
   ],
   invalid: [
     {

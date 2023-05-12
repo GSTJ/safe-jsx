@@ -15,7 +15,17 @@ function checkBooleanValidity(node, context) {
               typeof def.node.init.value === "boolean"
           )
       );
-  return isNegation || isBooleanLiteral || isBooleanVariable;
+  const isComplexLogicalExpression =
+    node.type === "LogicalExpression" &&
+    checkBooleanValidity(node.left, context) &&
+    checkBooleanValidity(node.right, context);
+
+  return (
+    isNegation ||
+    isBooleanLiteral ||
+    isBooleanVariable ||
+    isComplexLogicalExpression
+  );
 }
 
 module.exports = {
