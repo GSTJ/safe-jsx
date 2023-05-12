@@ -1,8 +1,8 @@
-# 🛡️ @gstj/safe-jsx
+# 🛡️ eslint-plugin-safe-jsx
 
-`@gstj/safe-jsx` is an ESLint plugin that enforces explicit boolean conversion before using the `&&` operator with JSX in React and React Native applications. This plugin ensures code reliability and helps prevent potential bugs that can break your app.
+`eslint-plugin-safe-jsx` is an ESLint plugin that enforces explicit boolean conversion before using the `&&` operator with JSX in React and React Native applications. This plugin ensures code reliability and helps prevent potential bugs that can break your app.
 
-## 💡 Why Use @gstj/safe-jsx?
+## 💡 Why Use eslint-plugin-safe-jsx?
 
 Consider the following example:
 
@@ -13,7 +13,7 @@ myText && <Text>{myText}</Text>;
 
 In this scenario, the code breaks because 0 is rendered outside the text component. The issue becomes more critical when the variable value comes from a server or an external source. This ESLint rule helps prevent such scenarios from happening.
 
-With @gstj/safe-jsx, your code will alert you of such potential errors and can be auto-fixed by ESLint, like so:
+With eslint-plugin-safe-jsx, your code will alert you of such potential errors and can be auto-fixed by ESLint, like so:
 
 ```js
 const myText = 0;
@@ -36,7 +36,7 @@ npm install eslint --save-dev
 yarn add eslint --dev
 ```
 
-Next, install `@gstj/safe-jsx`:
+Next, install `eslint-plugin-safe-jsx`:
 
 ```sh
 # npm
@@ -46,15 +46,15 @@ npm install eslint-plugin-jsx-a11y --save-dev
 yarn add eslint-plugin-jsx-a11y --dev
 ```
 
-**Note:** If you installed ESLint globally (using the `-g` flag in npm, or the `global` prefix in yarn) then you must also install `@gstj/safe-jsx` globally.
+**Note:** If you installed ESLint globally (using the `-g` flag in npm, or the `global` prefix in yarn) then you must also install `eslint-plugin-safe-jsx` globally.
 
 ## ⚙️ Usage
 
-Add `@gstj/safe-jsx` to the plugins section of your `.eslintrc` configuration file.
+Add `eslint-plugin-safe-jsx` to the plugins section of your `.eslintrc` configuration file.
 
 ```json
 {
-  "plugins": ["@gstj/safe-jsx"]
+  "plugins": ["eslint-plugin-safe-jsx"]
 }
 ```
 
@@ -63,7 +63,7 @@ Then configure the rules you want to use under the rules section.
 ```json
 {
   "rules": {
-    "@gstj/safe-jsx/jsx-explicit-boolean": "error" // or "warn"
+    "eslint-plugin-safe-jsx/jsx-explicit-boolean": "error" // or "warn"
   }
 }
 ```

@@ -1,5 +1,5 @@
 {
-  "name": "@gstj/safe-jsx",
+  "name": "eslint-plugin-safe-jsx",
   "description": "An ESLint plugin that enforces explicit boolean conversion before using && operator with JSX in React and React Native.",
   "keywords": [
     "jsx",
