@@ -1,3 +1,5 @@
+const binaryExpressionOperators = ["===", "!==", ">", "<", ">=", "<="];
+
 function checkBooleanValidity(node, context) {
   const { type } = node;
 
@@ -12,7 +14,7 @@ function checkBooleanValidity(node, context) {
 
     // Example: a === b, a !== b, a > b, a < b, a >= b, a <= b
     case "BinaryExpression":
-      return ["===", "!==", ">", "<", ">=", "<="].includes(node.operator);
+      return binaryExpressionOperators.includes(node.operator);
 
     // Example: Boolean(a) or new Boolean(a)
     case "CallExpression":
@@ -21,27 +23,45 @@ function checkBooleanValidity(node, context) {
         node.callee.type === "Identifier" && node.callee.name === "Boolean"
       );
 
-    // Example: a && b, where both a and b are boolean
-    case "LogicalExpression":
-      // Recursively check the left and right side of the expression
+    // Example: a && b && c && <div />, where all operands are boolean
+    case "LogicalExpression": {
+      const { operator, left, right } = node;
+      const isAndOperator = operator === "&&";
+      const operands = [left, right];
+
+      if (isAndOperator) {
+        // Check boolean validity for all operands in the logical expression
+        return operands.every((operand) =>
+          checkBooleanValidity(operand, context)
+        );
+      }
+
+      return false;
+    }
+
+    // Example: a ? b : c, where both b and c are boolean
+    case "ConditionalExpression":
       return (
-        checkBooleanValidity(node.left, context) &&
-        checkBooleanValidity(node.right, context)
+        checkBooleanValidity(node.test, context) &&
+        checkBooleanValidity(node.consequent, context) &&
+        checkBooleanValidity(node.alternate, context)
       );
 
     // Example: const a = true; a
     case "Identifier": {
-      // Lookup the variable in the current scope
-      const variable = context
-        .getScope()
-        .variables.find((v) => v.name === node.name);
-      return variable
-        ? variable.defs.some(
+      let scope = context.getScope();
+      while (scope) {
+        const variable = scope.variables.find((v) => v.name === node.name);
+        if (variable) {
+          return variable.defs.some(
             (def) =>
               def.type === "Variable" &&
-              typeof def.node.init.value === "boolean"
-          )
-        : false;
+              typeof def.node.init?.value === "boolean"
+          );
+        }
+        scope = scope.upper;
+      }
+      return false;
     }
 
     default:

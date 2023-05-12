@@ -20,6 +20,16 @@ const ruleTester = new TSESLint.RuleTester({
 
 ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
   valid: [
+    // Nested expressions
+    { code: "const a = true; const b = true; (a && b) && <div />;" },
+
+    // Conditional expressions
+    { code: "const a = true; const b = false; a ? b : false && <div />;" },
+
+    // Scope of variables
+    { code: "const a = true; const Component = () => a && <div />;" },
+
+    // Rest
     { code: "const a = true; a && <div />;" },
     { code: "const a = false; a && <div />;" },
     { code: "const a = true; Boolean(a) && <div />;" },
@@ -51,6 +61,30 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
     },
   ],
   invalid: [
+    // Nested conditional expressions
+    {
+      code: "const a = true; const b = '0'; (a ? b : false) && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output:
+        "const a = true; const b = '0'; (Boolean(a ? b : false)) && <div />;",
+    },
+
+    // Conditional expressions
+    {
+      code: "const a = true; const b = '0'; (a ? b : false) && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output:
+        "const a = true; const b = '0'; (Boolean(a ? b : false)) && <div />;",
+    },
+
+    // Scope of variables
+    {
+      code: "const a = '0'; const Component = () => a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "const a = '0'; const Component = () => Boolean(a) && <div />;",
+    },
+
+    // Rest
     {
       code: "const a = 0; a && <div />;",
       errors: [{ messageId: "booleanConversion" }],
