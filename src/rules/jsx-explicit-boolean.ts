@@ -26,17 +26,13 @@ function checkBooleanValidity(node, context) {
     // Example: a && b && c && <div />, where all operands are boolean
     case "LogicalExpression": {
       const { operator, left, right } = node;
-      const isAndOperator = operator === "&&";
-      const operands = [left, right];
 
-      if (isAndOperator) {
-        // Check boolean validity for all operands in the logical expression
-        return operands.every((operand) =>
-          checkBooleanValidity(operand, context)
-        );
-      }
+      if (operator !== "&&") return false;
 
-      return false;
+      return (
+        checkBooleanValidity(left, context) &&
+        checkBooleanValidity(right, context)
+      );
     }
 
     // Example: a ? b : c, where both b and c are boolean
