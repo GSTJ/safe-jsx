@@ -52,7 +52,7 @@ function checkBooleanValidity(node, context) {
           return variable.defs.some(
             (def) =>
               def.type === "Variable" &&
-              typeof def.node.init?.value === "boolean"
+              checkBooleanValidity(def.node.init, context)
           );
         }
         scope = scope.upper;

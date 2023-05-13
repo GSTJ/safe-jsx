@@ -31,6 +31,7 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
 
     // Rest
     { code: "const a = true; a && <div />;" },
+    { code: "const a = true; const b = a; b && <div />;" },
     { code: "const a = false; a && <div />;" },
     { code: "const a = true; Boolean(a) && <div />;" },
     { code: "const a = false; Boolean(a) && <div />;" },
@@ -142,6 +143,11 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
       errors: [{ messageId: "booleanConversion" }],
       output:
         "const a = 1; const b = '0'; const c = 0; <View>{Boolean(a && !!b && !!c) && <Text />}</View>;",
+    },
+    {
+      code: "const a = undefined; a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "const a = undefined; Boolean(a) && <div />;",
     },
   ],
 });
