@@ -44,6 +44,9 @@
     },
     {
       "files": ["**/*.test.{js,ts,jsx,tsx}"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off"
+      },
       "env": {
         "jest": true
       }
