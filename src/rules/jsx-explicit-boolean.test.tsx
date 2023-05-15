@@ -149,5 +149,10 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
       errors: [{ messageId: "booleanConversion" }],
       output: "const a = undefined; Boolean(a) && <div />;",
     },
+    {
+      code: "const a = 0 + 0; a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "const a = 0 + 0; Boolean(a) && <div />;",
+    },
   ],
 });

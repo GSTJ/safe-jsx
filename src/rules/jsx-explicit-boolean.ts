@@ -1,4 +1,19 @@
+// Does not include sum or minus, for example, as they don't always evaluate to a boolean
 const binaryExpressionOperators = ["===", "!==", ">", "<", ">=", "<="];
+
+function findVariable(context, nodeName) {
+  let scope = context.getScope();
+
+  // Traverse the scope chain until we find the variable
+  while (scope) {
+    const variable = scope.variables.find((v) => v.name === nodeName);
+    if (variable) return variable;
+
+    scope = scope.upper;
+  }
+
+  return null;
+}
 
 function checkBooleanValidity(node, context) {
   const { type } = node;
@@ -43,21 +58,14 @@ function checkBooleanValidity(node, context) {
         checkBooleanValidity(node.alternate, context)
       );
 
-    // Example: const a = true; a
     case "Identifier": {
-      let scope = context.getScope();
-      while (scope) {
-        const variable = scope.variables.find((v) => v.name === node.name);
-        if (variable) {
-          return variable.defs.some(
-            (def) =>
-              def.type === "Variable" &&
-              checkBooleanValidity(def.node.init, context)
-          );
-        }
-        scope = scope.upper;
-      }
-      return false;
+      const variable = findVariable(context, node.name);
+      if (!variable) return false;
+
+      const variableDef = variable.defs.find((def) => def.type === "Variable");
+      if (!variableDef) return false;
+
+      return checkBooleanValidity(variableDef.node.init, context);
     }
 
     default:
