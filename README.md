@@ -52,6 +52,36 @@ yarn add eslint-plugin-safe-jsx --dev
 
 ## ⚙️ Usage
 
+### Flat config (ESLint 9 and above)
+
+Spread the shared config into your `eslint.config.js`, and point it at the files you want linted:
+
+```js
+import safeJsx from "eslint-plugin-safe-jsx";
+
+export default [
+  { ...safeJsx.configs["flat/recommended"], files: ["**/*.jsx", "**/*.tsx"] },
+];
+```
+
+Or wire the plugin up yourself if you'd rather pick the severity:
+
+```js
+import safeJsx from "eslint-plugin-safe-jsx";
+
+export default [
+  {
+    files: ["**/*.jsx", "**/*.tsx"],
+    plugins: { "safe-jsx": safeJsx },
+    rules: {
+      "safe-jsx/jsx-explicit-boolean": "error", // or "warn"
+    },
+  },
+];
+```
+
+### Legacy config (ESLint 8 and below)
+
 Add `safe-jsx` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
 
 ```json

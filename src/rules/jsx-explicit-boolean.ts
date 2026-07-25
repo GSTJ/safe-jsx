@@ -1,8 +1,8 @@
 // Does not include sum or minus, for example, as they don't always evaluate to a boolean
 const binaryExpressionOperators = ["===", "!==", ">", "<", ">=", "<="];
 
-function findVariable(context, nodeName) {
-  let scope = context.getScope();
+function findVariable(initialScope, nodeName) {
+  let scope = initialScope;
 
   // Traverse the scope chain until we find the variable
   while (scope) {
@@ -15,7 +15,7 @@ function findVariable(context, nodeName) {
   return null;
 }
 
-function checkBooleanValidity(node, context) {
+function checkBooleanValidity(node, scope) {
   const { type } = node;
 
   switch (type) {
@@ -45,27 +45,26 @@ function checkBooleanValidity(node, context) {
       if (operator !== "&&") return false;
 
       return (
-        checkBooleanValidity(left, context) &&
-        checkBooleanValidity(right, context)
+        checkBooleanValidity(left, scope) && checkBooleanValidity(right, scope)
       );
     }
 
     // Example: a ? b : c, where both b and c are boolean
     case "ConditionalExpression":
       return (
-        checkBooleanValidity(node.test, context) &&
-        checkBooleanValidity(node.consequent, context) &&
-        checkBooleanValidity(node.alternate, context)
+        checkBooleanValidity(node.test, scope) &&
+        checkBooleanValidity(node.consequent, scope) &&
+        checkBooleanValidity(node.alternate, scope)
       );
 
     case "Identifier": {
-      const variable = findVariable(context, node.name);
+      const variable = findVariable(scope, node.name);
       if (!variable) return false;
 
       const variableDef = variable.defs.find((def) => def.type === "Variable");
       if (!variableDef) return false;
 
-      return checkBooleanValidity(variableDef.node.init, context);
+      return checkBooleanValidity(variableDef.node.init, scope);
     }
 
     default:
@@ -85,6 +84,10 @@ module.exports = {
   },
   defaultOptions: [],
   create(context) {
+    // `context.sourceCode` / `sourceCode.getScope()` land in ESLint 8.37+ and are
+    // the only options from ESLint 9 on, where the context helpers were removed.
+    const sourceCode = context.sourceCode || context.getSourceCode();
+
     return {
       LogicalExpression(node) {
         // We're only interested in && operators
@@ -97,7 +100,11 @@ module.exports = {
         const { left } = node;
 
         // Check if it's a valid boolean usage, otherwise it must be fixed
-        const isSafeBooleanUsage = checkBooleanValidity(left, context);
+        const scope = sourceCode.getScope
+          ? sourceCode.getScope(node)
+          : context.getScope();
+
+        const isSafeBooleanUsage = checkBooleanValidity(left, scope);
         if (isSafeBooleanUsage) return;
 
         // Report the error and fix it
@@ -107,7 +114,7 @@ module.exports = {
           fix(fixer) {
             return fixer.replaceTextRange(
               [left.range[0], left.range[1]],
-              `Boolean(${context.getSourceCode().getText(left)})`
+              `Boolean(${sourceCode.getText(left)})`
             );
           },
         });
