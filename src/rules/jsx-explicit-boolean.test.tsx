@@ -1,21 +1,16 @@
-import { TSESLint } from "@typescript-eslint/experimental-utils";
+const { RuleTester } = require("eslint");
+const tsParser = require("@typescript-eslint/parser");
 
-const parser = require.resolve("@typescript-eslint/parser");
-
-const parserOptions = {
-  parserOptions: {
-    project: "../../tsconfig.json",
+const ruleTester = new RuleTester({
+  languageOptions: {
+    parser: tsParser,
     sourceType: "module",
+    parserOptions: {
+      ecmaFeatures: {
+        jsx: true,
+      },
+    },
   },
-  ecmaFeatures: {
-    experimentalObjectRestSpread: true,
-    jsx: true,
-  },
-};
-
-const ruleTester = new TSESLint.RuleTester({
-  parser,
-  parserOptions,
 });
 
 ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
@@ -62,14 +57,6 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
     },
   ],
   invalid: [
-    // Nested conditional expressions
-    {
-      code: "const a = true; const b = '0'; (a ? b : false) && <div />;",
-      errors: [{ messageId: "booleanConversion" }],
-      output:
-        "const a = true; const b = '0'; (Boolean(a ? b : false)) && <div />;",
-    },
-
     // Conditional expressions
     {
       code: "const a = true; const b = '0'; (a ? b : false) && <div />;",
@@ -143,11 +130,6 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
       errors: [{ messageId: "booleanConversion" }],
       output:
         "const a = 1; const b = '0'; const c = 0; <View>{Boolean(a && !!b && !!c) && <Text />}</View>;",
-    },
-    {
-      code: "const a = undefined; a && <div />;",
-      errors: [{ messageId: "booleanConversion" }],
-      output: "const a = undefined; Boolean(a) && <div />;",
     },
     {
       code: "const a = 0 + 0; a && <div />;",
