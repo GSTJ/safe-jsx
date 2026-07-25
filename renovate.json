@@ -3,9 +3,9 @@
   "extends": ["config:recommended"],
   "packageRules": [
     {
-      "description": "typescript-eslint and ts-jest don't accept TS 7 in their peer ranges yet",
+      "description": "TS 6 needs an explicit types array and a move off moduleResolution node10",
       "matchPackageNames": ["typescript"],
-      "allowedVersions": "<7"
+      "allowedVersions": "<6"
     }
   ]
 }
