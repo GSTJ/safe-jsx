@@ -55,6 +55,11 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
     {
       code: "{!!step.subtitle && index === activeStep - 1 && <Text />}",
     },
+
+    // The same variable twice: the cycle guard tracks the resolution path, so
+    // seeing `a` on the left must not poison `a` on the right.
+    { code: "const a = true; (a && a) && <div />;" },
+    { code: "const a = true; a && <>{a}</>;" },
   ],
   invalid: [
     // Conditional expressions
@@ -135,6 +140,76 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
       code: "const a = 0 + 0; a && <div />;",
       errors: [{ messageId: "booleanConversion" }],
       output: "const a = 0 + 0; Boolean(a) && <div />;",
+    },
+
+    // Declarations with no initialiser. These used to crash the rule while
+    // reading `type` off a null init, which takes the whole lint run down.
+    {
+      code: "let a; a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "let a; Boolean(a) && <div />;",
+    },
+    {
+      code: "for (const x of xs) { x && <div />; }",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "for (const x of xs) { Boolean(x) && <div />; }",
+    },
+    {
+      code: "for (const k in o) { k && <div />; }",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "for (const k in o) { Boolean(k) && <div />; }",
+    },
+
+    // A declaration that refers to itself. This used to recurse until the stack
+    // ran out.
+    {
+      code: "var a = a; a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "var a = a; Boolean(a) && <div />;",
+    },
+
+    // Reassignment. The initialiser says boolean, the value at the use site is
+    // 0, and the old rule trusted the initialiser and stayed quiet.
+    {
+      code: "let a = true; a = 0; a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "let a = true; a = 0; Boolean(a) && <div />;",
+    },
+    {
+      code: "let a = true; const b = a; a = 0; b && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "let a = true; const b = a; a = 0; Boolean(b) && <div />;",
+    },
+
+    // Fragments render the falsy left-hand value just like elements do, and
+    // used to be skipped entirely.
+    {
+      code: "const a = 0; a && <></>;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "const a = 0; Boolean(a) && <></>;",
+    },
+    {
+      code: "const Component = ({ a }) => <View>{a && <>{a}</>}</View>;",
+      errors: [{ messageId: "booleanConversion" }],
+      output:
+        "const Component = ({ a }) => <View>{Boolean(a) && <>{a}</>}</View>;",
+    },
+
+    // A comma expression needs its own parentheses, otherwise the fix turns
+    // into Boolean(a, b) and quietly evaluates a instead of b.
+    {
+      code: "const a = 0, b = 1; (a, b) && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "const a = 0, b = 1; (Boolean((a, b))) && <div />;",
+    },
+
+    // The initialiser resolves from the declaration site, so a shadowing
+    // binding at the use site can't vouch for it.
+    {
+      code: "const a = t; const Component = () => { const t = true; return a && <div />; };",
+      errors: [{ messageId: "booleanConversion" }],
+      output:
+        "const a = t; const Component = () => { const t = true; return Boolean(a) && <div />; };",
     },
   ],
 });
