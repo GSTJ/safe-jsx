@@ -31,8 +31,10 @@
     "prepublishOnly": "safe-publish-latest && npm run lint && npm run jest",
     "jest": "jest --coverage",
     "posttest": "npm audit --omit=dev",
-    "version": "auto-changelog && git add CHANGELOG.md",
-    "postversion": "auto-changelog && git add CHANGELOG.md && git commit --no-edit --amend && git tag -f \"v$(node -e \"console.log(require('./package.json').version)\")\""
+    "changelog": "node tools/changelog.mjs",
+    "release-notes": "node tools/release-notes.mjs",
+    "version": "npm run changelog && git add CHANGELOG.md",
+    "postversion": "node tools/release-notes.mjs > .release-notes && git tag -f -a --cleanup=verbatim \"v$npm_package_version\" -F .release-notes && rm -f .release-notes"
   },
   "author": "Gabriel Taveira",
   "license": "MIT",
@@ -41,7 +43,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^26.1.1",
     "@typescript-eslint/parser": "^8.65.0",
-    "auto-changelog": "^2.6.0",
+    "conventional-changelog-cli": "^5.0.0",
     "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-eslint-plugin": "^7.5.0",
@@ -74,21 +76,13 @@
       "src"
     ]
   },
-  "auto-changelog": {
-    "output": "CHANGELOG.md",
-    "template": "keepachangelog",
-    "unreleased": false,
-    "commitLimit": false,
-    "backfillLimit": false,
-    "hideCredit": true,
-    "startingVersion": "6.6.2"
-  },
   "publishConfig": {
     "ignore": [
       "!lib",
       ".github/workflows",
       "/src",
       "/reports",
+      "/tools",
       "CONTRIBUTING.md"
     ]
   }
