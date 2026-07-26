@@ -6,10 +6,10 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "lib": ["ES2020"],
-    "outDir": "dist",
+    "types": ["node", "jest"],
+    "outDir": "lib",
     "rootDir": "src"
   },
   "exclude": ["node_modules", "src/**/*.test.ts", "src/**/*.test.tsx"]

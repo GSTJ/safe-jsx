@@ -3,9 +3,9 @@
   "extends": ["config:recommended"],
   "packageRules": [
     {
-      "description": "TS 6 needs an explicit types array and a move off moduleResolution node10",
+      "description": "@typescript-eslint/parser peers typescript >=4.8.4 <6.1.0, and ts-jest peers >=4.3 <7. Raise this once both widen.",
       "matchPackageNames": ["typescript"],
-      "allowedVersions": "<6"
+      "allowedVersions": "<6.1"
     }
   ]
 }
