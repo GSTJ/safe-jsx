@@ -1,0 +1,17 @@
+# pnpm 11 keeps its settings here rather than in package.json's "pnpm" field.
+
+# jest-resolve ships a native resolver (unrs-resolver) whose install script
+# links the platform binary. Without this, `pnpm install` exits 1 on
+# ERR_PNPM_IGNORED_BUILDS.
+allowBuilds:
+  unrs-resolver: true
+
+# pnpm refuses packages published more recently than `minimumReleaseAge`.
+# The magic-* stack was published for this migration, so it is younger than the
+# default window; these are the versions we deliberately accepted.
+minimumReleaseAgeExclude:
+  - magic-codemods@1.1.0
+  - magic-oxfmt-config@1.2.0
+  - magic-oxlint-config@1.2.0
+  - magic-tsconfig@1.2.0
+  - eslint-plugin-safe-jsx@1.3.0

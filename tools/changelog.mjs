@@ -24,12 +24,12 @@ const body = execFileSync(
     "--release-count",
     "0",
   ],
-  { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 }
+  { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
 );
 
 if (!body.trim()) {
   console.error(
-    "conventional-changelog produced nothing, refusing to write an empty changelog"
+    "conventional-changelog produced nothing, refusing to write an empty changelog",
   );
   process.exit(1);
 }

@@ -8,13 +8,13 @@ import { readFileSync } from "node:fs";
 const changelog = readFileSync("CHANGELOG.md", "utf8");
 
 // Only `## ` starts a release. `### ` headings are the type groups inside one.
-const releases = changelog
+const latest = changelog
   .split(/^(?=## )/m)
-  .filter((part) => part.startsWith("## "));
+  .find((part) => part.startsWith("## "));
 
-if (releases.length === 0) {
+if (!latest) {
   console.error("no release sections found in CHANGELOG.md");
   process.exit(1);
 }
 
-process.stdout.write(`${releases[0].trim()}\n`);
+process.stdout.write(`${latest.trim()}\n`);

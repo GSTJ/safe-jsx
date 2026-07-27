@@ -9,14 +9,11 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-      - run: npm install
-      - run: npm run lint
-      - run: npm run jest
-      - run: npm run build
+  ci:
+    uses: GSTJ/magic/.github/workflows/ci.yml@main
+    with:
+      node-version: "24"
+      build-command: pnpm run build
+      test-command: pnpm run test
+      # Nothing in this repo uses turbo.
+      turbo-cache: false
