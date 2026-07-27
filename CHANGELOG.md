@@ -4,6 +4,13 @@ Generated from conventional commit messages. Breaking changes are collected
 under their own heading, from either a `!` after the type or a
 `BREAKING CHANGE:` footer.
 
+## [1.3.0](https://github.com/GSTJ/safe-jsx/compare/v1.2.0...v1.3.0) (2026-07-27)
+
+### Bug Fixes
+
+* **changelog:** generate from conventional commits and backfill the history ([#37](https://github.com/GSTJ/safe-jsx/issues/37)) ([7d15caf](https://github.com/GSTJ/safe-jsx/commit/7d15cafc495d0867820a3c0a6548b0016c868b06))
+* **jsx-explicit-boolean:** five soundness bugs in the boolean check ([#36](https://github.com/GSTJ/safe-jsx/issues/36)) ([7f0ba25](https://github.com/GSTJ/safe-jsx/commit/7f0ba25a535d2c74f2ef8331cdd1511df2c0647c))
+
 ## [1.2.0](https://github.com/GSTJ/safe-jsx/compare/v1.1.0...v1.2.0) (2026-07-25)
 
 ## [1.1.0](https://github.com/GSTJ/safe-jsx/compare/v1.0.5...v1.1.0) (2023-05-13)
