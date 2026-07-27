@@ -4,7 +4,7 @@ const safeJsx = require("./index");
 
 // Loads the plugin through the real ESLint API, so a flat-config or plugin-API
 // break shows up here instead of in someone else's project.
-async function lint(code) {
+async function lint(code: string) {
   const eslint = new ESLintApi({
     overrideConfigFile: true,
     overrideConfig: [safeJsx.configs["flat/recommended"]],

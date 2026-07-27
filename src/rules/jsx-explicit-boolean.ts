@@ -1,7 +1,13 @@
-// Does not include sum or minus, for example, as they don't always evaluate to a boolean
-const binaryExpressionOperators = ["===", "!==", ">", "<", ">=", "<="];
+import type { Rule, Scope, SourceCode } from "eslint";
+import type { Node } from "estree";
 
-function findVariable(initialScope, nodeName) {
+// Does not include sum or minus, for example, as they don't always evaluate to a boolean
+const binaryExpressionOperators = new Set(["===", "!==", ">", "<", ">=", "<="]);
+
+const findVariable = (
+  initialScope: Scope.Scope | null,
+  nodeName: string,
+): Scope.Variable | null => {
   let scope = initialScope;
 
   // Traverse the scope chain until we find the variable
@@ -13,18 +19,27 @@ function findVariable(initialScope, nodeName) {
   }
 
   return null;
-}
+};
+
+/** A `const a = …` binding — the only definition kind that carries an initialiser. */
+type VariableDefinition = Extract<Scope.Definition, { type: "Variable" }>;
+
+const isVariableDefinition = (
+  definition: Scope.Definition,
+): definition is VariableDefinition => definition.type === "Variable";
 
 // `seen` holds the variables on the current resolution path, so a declaration
 // that refers back to itself stops instead of recursing forever.
-function checkBooleanValidity(node, scope, seen = new Set()) {
+const checkBooleanValidity = (
+  node: Node | null | undefined,
+  scope: Scope.Scope | null,
+  seen = new Set<Scope.Variable>(),
+): boolean => {
   // A declaration can have no initialiser at all: `let a;`, or the binding in
   // `for (const x of xs)`. Both give a null init.
   if (!node) return false;
 
-  const { type } = node;
-
-  switch (type) {
+  switch (node.type) {
     // Example: !a
     case "UnaryExpression":
       return node.operator === "!";
@@ -35,7 +50,7 @@ function checkBooleanValidity(node, scope, seen = new Set()) {
 
     // Example: a === b, a !== b, a > b, a < b, a >= b, a <= b
     case "BinaryExpression":
-      return binaryExpressionOperators.includes(node.operator);
+      return binaryExpressionOperators.has(node.operator);
 
     // Example: Boolean(a) or new Boolean(a)
     case "CallExpression":
@@ -71,13 +86,13 @@ function checkBooleanValidity(node, scope, seen = new Set()) {
       // `var a = a;` resolves to itself, so bail before following it again.
       if (seen.has(variable)) return false;
 
-      const variableDef = variable.defs.find((def) => def.type === "Variable");
+      const variableDef = variable.defs.find(isVariableDefinition);
       if (!variableDef) return false;
 
       // Any write after the declaration makes the initialiser useless as
       // evidence: `let a = true; a = 0;` isn't a boolean by the time it's used.
       const isReassigned = variable.references.some(
-        (reference) => reference.isWrite() && !reference.init
+        (reference) => reference.isWrite() && !reference.init,
       );
       if (isReassigned) return false;
 
@@ -88,7 +103,7 @@ function checkBooleanValidity(node, scope, seen = new Set()) {
       const isBoolean = checkBooleanValidity(
         variableDef.node.init,
         variable.scope,
-        seen
+        seen,
       );
       seen.delete(variable);
 
@@ -98,9 +113,34 @@ function checkBooleanValidity(node, scope, seen = new Set()) {
     default:
       return false;
   }
+};
+
+/**
+ * `context.sourceCode` / `sourceCode.getScope()` land in ESLint 8.37+ and are
+ * the only options from ESLint 9 on, where the context helpers were removed.
+ * The peer range still allows ESLint 3-8, so both paths stay live. The casts
+ * are needed because this builds against the ESLint 10 types, which no longer
+ * describe the helpers those older versions expose.
+ */
+interface LegacyRuleContext {
+  getSourceCode: () => SourceCode;
+  getScope: () => Scope.Scope;
 }
 
-module.exports = {
+const getSourceCode = (context: Rule.RuleContext): SourceCode =>
+  context.sourceCode ??
+  (context as unknown as LegacyRuleContext).getSourceCode();
+
+const getScope = (
+  context: Rule.RuleContext,
+  sourceCode: SourceCode,
+  node: Rule.Node,
+): Scope.Scope =>
+  sourceCode.getScope
+    ? sourceCode.getScope(node)
+    : (context as unknown as LegacyRuleContext).getScope();
+
+const rule: Rule.RuleModule = {
   meta: {
     type: "suggestion",
     fixable: "code",
@@ -109,12 +149,10 @@ module.exports = {
         "Please ensure a boolean conversion before using the && operator with JSX",
     },
     schema: [],
+    defaultOptions: [],
   },
-  defaultOptions: [],
   create(context) {
-    // `context.sourceCode` / `sourceCode.getScope()` land in ESLint 8.37+ and are
-    // the only options from ESLint 9 on, where the context helpers were removed.
-    const sourceCode = context.sourceCode || context.getSourceCode();
+    const sourceCode = getSourceCode(context);
 
     return {
       LogicalExpression(node) {
@@ -122,20 +160,16 @@ module.exports = {
         if (node.operator !== "&&") return;
 
         // `cond && <div />` and `cond && <>…</>` both leak the left-hand value
-        // into the tree when it's falsy, so both sides need the guard.
-        if (
-          node.right.type !== "JSXElement" &&
-          node.right.type !== "JSXFragment"
-        )
-          return;
+        // into the tree when it's falsy, so both sides need the guard. JSX
+        // nodes are not part of ESTree, so the type is compared as a string.
+        const rightType: string = node.right.type;
+        if (rightType !== "JSXElement" && rightType !== "JSXFragment") return;
 
         // Left-hand side part of the expression
         const { left } = node;
 
         // Check if it's a valid boolean usage, otherwise it must be fixed
-        const scope = sourceCode.getScope
-          ? sourceCode.getScope(node)
-          : context.getScope();
+        const scope = getScope(context, sourceCode, node);
 
         const isSafeBooleanUsage = checkBooleanValidity(left, scope);
         if (isSafeBooleanUsage) return;
@@ -154,13 +188,12 @@ module.exports = {
             const argument =
               left.type === "SequenceExpression" ? `(${text})` : text;
 
-            return fixer.replaceTextRange(
-              [left.range[0], left.range[1]],
-              `Boolean(${argument})`
-            );
+            return fixer.replaceText(left, `Boolean(${argument})`);
           },
         });
       },
     };
   },
-} as const;
+};
+
+module.exports = rule;
