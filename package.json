@@ -31,6 +31,10 @@
       "/src",
       "/reports",
       "/tools",
+      "/oxlint.config.mts",
+      "/oxfmt.config.mts",
+      "/tsconfig.build.json",
+      "/pnpm-workspace.yaml",
       "CONTRIBUTING.md"
     ]
   },
