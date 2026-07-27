@@ -3,7 +3,7 @@
   "extends": ["github>GSTJ/magic"],
   "packageRules": [
     {
-      "description": "@typescript-eslint/parser peers typescript >=4.8.4 <6.1.0, and ts-jest peers >=4.3 <7. Raise this once both widen.",
+      "description": "Two peers set this, and neither went away with the oxlint migration. @typescript-eslint/parser@8 peers >=4.8.4 <6.1.0 and is still the parser src/rules/*.test.tsx runs RuleTester under. ts-jest@29 peers >=4.3 <7 and is the harder of the two: TypeScript 7 typechecks this package and builds a byte-identical lib/, while ts-jest refuses to load it at all with 'does not expose the JavaScript compiler API required by ts-jest'. Nothing is held back either way today, since 6.0.3 is the last of the 6.x line. Raise it when ts-jest supports TypeScript 7.",
       "matchPackageNames": ["typescript"],
       "allowedVersions": "<6.1"
     }
