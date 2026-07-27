@@ -122,10 +122,10 @@ const checkBooleanValidity = (
  * are needed because this builds against the ESLint 10 types, which no longer
  * describe the helpers those older versions expose.
  */
-interface LegacyRuleContext {
+type LegacyRuleContext = {
   getSourceCode: () => SourceCode;
   getScope: () => Scope.Scope;
-}
+};
 
 const getSourceCode = (context: Rule.RuleContext): SourceCode =>
   context.sourceCode ??
