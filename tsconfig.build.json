@@ -4,11 +4,7 @@
     "noEmit": false,
     "outDir": "lib",
     "rootDir": "src",
-    "types": ["node"],
-    // magic-tsconfig/base turns `incremental` on. `build` starts with
-    // `rimraf lib`, and tsc trusts a stale .tsbuildinfo over the missing
-    // output — the second build in a working tree emits nothing at all.
-    "incremental": false
+    "types": ["node"]
   },
   "include": ["src"],
   "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
