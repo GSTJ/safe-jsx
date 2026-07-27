@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": ["github>GSTJ/magic"],
   "packageRules": [
     {
       "description": "@typescript-eslint/parser peers typescript >=4.8.4 <6.1.0, and ts-jest peers >=4.3 <7. Raise this once both widen.",
