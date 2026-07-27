@@ -2,8 +2,10 @@ import { extendConfig } from "magic-oxlint-config";
 import base from "magic-oxlint-config/base";
 
 // `extendConfig` flattens the preset into one config, so `ignorePatterns` and
-// `plugins` survive — oxlint's own `extends` drops them (still true on 1.75.0
-// with magic-oxlint-config 1.1.0; checked with `oxlint --print-config`).
+// `plugins` survive — oxlint's own `extends` drops them. 1.2.0 rescued `env`
+// and `globals` by mirroring them into a `files: ["**"]` override, but
+// `ignorePatterns` has no per-override form to hide in, so `extends` stays
+// undocumented and this is the shape to use.
 export default extendConfig(base, {
   // The preset covers the usual suspects; these two are this repo's own: `lib/`
   // is the published build output, `reports/` is scratch for the release scripts.
