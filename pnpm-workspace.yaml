@@ -10,8 +10,8 @@ allowBuilds:
 # The magic-* stack was published for this migration, so it is younger than the
 # default window; these are the versions we deliberately accepted.
 minimumReleaseAgeExclude:
-  - magic-codemods@1.0.0
-  - magic-oxfmt-config@1.0.0
-  - magic-oxlint-config@1.0.0
-  - magic-tsconfig@1.0.0
+  - magic-codemods@1.1.0
+  - magic-oxfmt-config@1.1.0
+  - magic-oxlint-config@1.1.0
+  - magic-tsconfig@1.1.0
   - eslint-plugin-safe-jsx@1.3.0
