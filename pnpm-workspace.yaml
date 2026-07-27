@@ -11,7 +11,7 @@ allowBuilds:
 # default window; these are the versions we deliberately accepted.
 minimumReleaseAgeExclude:
   - magic-codemods@1.1.0
-  - magic-oxfmt-config@1.1.0
-  - magic-oxlint-config@1.1.0
-  - magic-tsconfig@1.1.0
+  - magic-oxfmt-config@1.2.0
+  - magic-oxlint-config@1.2.0
+  - magic-tsconfig@1.2.0
   - eslint-plugin-safe-jsx@1.3.0
