@@ -49,7 +49,7 @@
     "test": "jest --coverage",
     "prepublish": "not-in-publish || npm run prepublishOnly",
     "prepublishOnly": "safe-publish-latest && npm run lint && npm run test",
-    "changelog": "node tools/changelog.mjs && oxfmt CHANGELOG.md",
+    "changelog": "node tools/changelog.mjs",
     "release-notes": "node tools/release-notes.mjs",
     "version": "npm run changelog && git add CHANGELOG.md",
     "postversion": "node tools/release-notes.mjs > .release-notes && git tag -f -a --cleanup=verbatim \"v$npm_package_version\" -F .release-notes && rm -f .release-notes"
