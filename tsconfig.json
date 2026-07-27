@@ -1,16 +1,18 @@
 {
+  "extends": "magic-tsconfig/base.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "strict": false,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "lib": ["ES2020"],
+    // The published artifact is CommonJS — ESLint 3 through 10 `require()` it,
+    // and oxlint loads it as a jsPlugin the same way — so the shared base's
+    // `module: Preserve` is wrong here. `node16` keeps `.ts` sources CJS (this
+    // package has no `"type": "module"`) while still resolving package
+    // `exports` maps, which the config files need.
+    "module": "node16",
+    "moduleResolution": "node16",
     "types": ["node", "jest"],
-    "outDir": "lib",
-    "rootDir": "src"
+    // Only meaningful to ts-jest, which compiles per file and refuses to infer
+    // it under TypeScript 6 (TS5011). Typechecking here is `noEmit`; the
+    // published layout comes from tsconfig.build.json.
+    "rootDir": "."
   },
-  "exclude": ["node_modules", "src/**/*.test.ts", "src/**/*.test.tsx"]
+  "include": ["src", "tools"]
 }

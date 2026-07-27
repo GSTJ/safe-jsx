@@ -24,10 +24,22 @@ Open an issue on our issues list on GitHub which describes the feature you would
 
 ### Pull Requests
 
-- Fork the repo and create your branch from `master`.
+- Fork the repo and create your branch from `main`.
 - If you've added code that should be tested, add tests.
 - Ensure the test suite passes.
 - Make sure your code lints.
+
+The toolchain is pnpm plus the shared [GSTJ/magic](https://github.com/GSTJ/magic)
+stack — oxlint for linting, oxfmt for formatting:
+
+```sh
+pnpm install
+pnpm run lint        # oxlint      (pnpm run lint:fix to autofix)
+pnpm run format      # oxfmt check (pnpm run format:fix to write)
+pnpm run typecheck   # tsc --noEmit
+pnpm run test        # jest
+pnpm run build       # emits lib/
+```
 
 ## Commit Message Guidelines
 
@@ -69,7 +81,7 @@ The `<scope>` can be empty (e.g. `revert: fix:  'alert()'`) when the change is g
 
 #### `<short summary>`
 
-The `<short summary>` is very important as it is the title of the commit message. As the name suggests, it should be a short summary about the improvements made in the commit. 
+The `<short summary>` is very important as it is the title of the commit message. As the name suggests, it should be a short summary about the improvements made in the commit.
 
 - use the imperative, present tense: "change" not "changed" nor "changes"
 - don't capitalize the first letter
@@ -101,10 +113,10 @@ BREAKING CHANGE: the rule takes an options object now, so existing configs need
 a second argument.
 ```
 
-Watch the wrapping in the body. The parser treats any line *starting* with
+Watch the wrapping in the body. The parser treats any line _starting_ with
 `BREAKING CHANGE` or `BREAKING-CHANGE` as that footer, so a wrapped sentence that
 happens to begin with either one will declare a breaking change you didn't mean.
-Check `npm run changelog` before tagging if the body talks about breaking changes
+Check `pnpm run changelog` before tagging if the body talks about breaking changes
 at all.
 
 ## Pull Request Process

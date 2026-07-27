@@ -2,6 +2,7 @@
 coverage/
 lib
 node_modules
+*.tsbuildinfo
 npm-debug.log
 
 npm-shrinkwrap.json

@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@types/estree':
+        specifier: ^1.0.9
+        version: 1.0.9
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
