@@ -87,6 +87,26 @@ For example:
 
 `Closes #204`
 
+### Breaking Changes
+
+Mark a breaking change with a `!` after the type, a `BREAKING CHANGE:` footer, or
+both. Either form puts the commit under its own heading in `CHANGELOG.md`, in the
+annotated git tag and in the GitHub release, all three generated from the same
+place.
+
+```
+feat(rule)!: require an options object
+
+BREAKING CHANGE: the rule takes an options object now, so existing configs need
+a second argument.
+```
+
+Watch the wrapping in the body. The parser treats any line *starting* with
+`BREAKING CHANGE` or `BREAKING-CHANGE` as that footer, so a wrapped sentence that
+happens to begin with either one will declare a breaking change you didn't mean.
+Check `npm run changelog` before tagging if the body talks about breaking changes
+at all.
+
 ## Pull Request Process
 
 1. Ensure any install or build dependencies are removed before the end of the layer when doing a build.
