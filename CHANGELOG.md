@@ -4,6 +4,12 @@ Generated from conventional commit messages. Breaking changes are collected
 under their own heading, from either a `!` after the type or a
 `BREAKING CHANGE:` footer.
 
+## [1.3.1](https://github.com/GSTJ/safe-jsx/compare/v1.3.0...v1.3.1) (2026-07-28)
+
+### Bug Fixes
+
+* **release:** stop running oxfmt over the generated CHANGELOG ([0abd1fe](https://github.com/GSTJ/safe-jsx/commit/0abd1fe55f6e883e09a8474dc5eb99d37e086c84))
+
 ## [1.3.0](https://github.com/GSTJ/safe-jsx/compare/v1.2.0...v1.3.0) (2026-07-27)
 
 ### Bug Fixes
