@@ -7,6 +7,12 @@ under their own heading, from either a `!` after the type or a
 Releases up to 1.3.0 are kept as they were published, in
 tools/changelog-history.md.
 
+## [1.3.6](https://github.com/GSTJ/safe-jsx/compare/v1.3.5...v1.3.6) (2026-07-28)
+
+### Bug Fixes
+
+* **jsx-explicit-boolean:** stop trusting a shadowed Boolean ([#49](https://github.com/GSTJ/safe-jsx/issues/49)) ([d140eb5](https://github.com/GSTJ/safe-jsx/commit/d140eb5de0f02c99aa766c6713090c9d57bbde92))
+
 ## [1.3.5](https://github.com/GSTJ/safe-jsx/compare/v1.3.4...v1.3.5) (2026-07-28)
 
 ### Build System
