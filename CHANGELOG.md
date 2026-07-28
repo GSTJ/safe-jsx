@@ -7,6 +7,16 @@ under their own heading, from either a `!` after the type or a
 Releases up to 1.3.0 are kept as they were published, in
 tools/changelog-history.md.
 
+## [1.3.5](https://github.com/GSTJ/safe-jsx/compare/v1.3.4...v1.3.5) (2026-07-28)
+
+### Build System
+
+* rewrite the security policy and ship it in the tarball ([#47](https://github.com/GSTJ/safe-jsx/issues/47)) ([78bc88f](https://github.com/GSTJ/safe-jsx/commit/78bc88f7791cda50b63fd6e2ce84aaa13accb8ff))
+
+### Chores
+
+* drop the npmignore leftovers from [#44](https://github.com/GSTJ/safe-jsx/issues/44) ([#46](https://github.com/GSTJ/safe-jsx/issues/46)) ([00cc4d9](https://github.com/GSTJ/safe-jsx/commit/00cc4d904ab8a900221a1d2e16b91439bcc47df1))
+
 ## [1.3.4](https://github.com/GSTJ/safe-jsx/compare/v1.3.3...v1.3.4) (2026-07-28)
 
 ### Build System
