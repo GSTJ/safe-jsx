@@ -33,6 +33,7 @@
       "/tools",
       "/oxlint.config.mts",
       "/oxfmt.config.mts",
+      "/tsconfig.json",
       "/tsconfig.build.json",
       "/pnpm-workspace.yaml",
       "CONTRIBUTING.md"
