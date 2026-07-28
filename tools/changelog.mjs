@@ -23,6 +23,9 @@ const body = execFileSync(
     "conventionalcommits",
     "--release-count",
     "0",
+    // Without this the CLI writes CHANGELOG.md itself and leaves stdout empty,
+    // which would skip the header below and trip the guard on the next line.
+    "--stdout",
   ],
   { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
 );
