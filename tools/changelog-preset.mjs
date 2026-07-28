@@ -10,12 +10,12 @@
 // So the split here is by whether a type can change the published artifact:
 //
 //   renders   feat fix perf revert   the stock set
-//             build                  tsconfig, publishConfig, the emitted lib/
+//             build                  tsconfig, the files field, the emitted lib/
 //             refactor               rewrites the emitted lib/
 //             chore                  dependency and config moves land in lib/
 //             docs                   README.md is inside the tarball
 //
-//   hidden    ci                     .github/workflows is publishConfig.ignore'd
+//   hidden    ci                     .github/ is outside the files field
 //             style                  formatting source cannot move tsc's output
 //             test                   src/**/*.test.* is excluded from the build
 //
