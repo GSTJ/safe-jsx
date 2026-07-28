@@ -7,6 +7,13 @@ under their own heading, from either a `!` after the type or a
 Releases up to 1.3.0 are kept as they were published, in
 tools/changelog-history.md.
 
+## [1.3.3](https://github.com/GSTJ/safe-jsx/compare/v1.3.2...v1.3.3) (2026-07-28)
+
+### Build System
+
+* make the eslint peer optional ([b0c36cb](https://github.com/GSTJ/safe-jsx/commit/b0c36cba0c2b47cc1b529aae2ac50e95f0961a69))
+* publish with npm's files field instead of npmignore ([b49634e](https://github.com/GSTJ/safe-jsx/commit/b49634e4848350548ad3847e77462d68eb8303fd))
+
 ## [1.3.2](https://github.com/GSTJ/safe-jsx/compare/v1.3.1...v1.3.2) (2026-07-28)
 
 ### Bug Fixes
