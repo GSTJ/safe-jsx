@@ -28,6 +28,42 @@ const isVariableDefinition = (
   definition: Scope.Definition,
 ): definition is VariableDefinition => definition.type === "Variable";
 
+// `Boolean(…)` is trusted by name, which is only sound while the name is the
+// global. `const Boolean = (x) => x` turns the very escape hatch this rule
+// recommends into a no-op, and the rule would bless `Boolean(0) && <Text />`.
+//
+// A global supplied through `languageOptions.globals` resolves to a variable
+// with no defs, so the presence of a def is what separates a binding written in
+// this file from the built-in.
+const isShadowed = (scope: Scope.Scope | null, name: string): boolean => {
+  const variable = findVariable(scope, name);
+  return variable !== null && variable.defs.length > 0;
+};
+
+/**
+ * The declaration whose initialiser can stand in for `variable`, or null when
+ * nothing about the binding makes that initialiser evidence of anything.
+ */
+const evidenceFor = (variable: Scope.Variable): VariableDefinition | null => {
+  const definition = variable.defs.find(isVariableDefinition);
+  if (!definition) return null;
+
+  // Only a plain `const a = …` binds the initialiser to the name. In
+  // `const { a } = flag` the declarator's init is `flag`, which says nothing
+  // about `a`, and reading it as evidence let a boolean-looking right-hand side
+  // vouch for a binding it never produced.
+  if (definition.node.id.type !== "Identifier") return null;
+
+  // Any write after the declaration makes the initialiser useless as evidence:
+  // `let a = true; a = 0;` isn't a boolean by the time it's used.
+  const isReassigned = variable.references.some(
+    (reference) => reference.isWrite() && !reference.init,
+  );
+  if (isReassigned) return null;
+
+  return definition;
+};
+
 // `seen` holds the variables on the current resolution path, so a declaration
 // that refers back to itself stops instead of recursing forever.
 const checkBooleanValidity = (
@@ -52,11 +88,13 @@ const checkBooleanValidity = (
     case "BinaryExpression":
       return binaryExpressionOperators.has(node.operator);
 
-    // Example: Boolean(a) or new Boolean(a)
+    // Example: Boolean(a) or new Boolean(a), and only the global one.
     case "CallExpression":
     case "NewExpression":
       return (
-        node.callee.type === "Identifier" && node.callee.name === "Boolean"
+        node.callee.type === "Identifier" &&
+        node.callee.name === "Boolean" &&
+        !isShadowed(scope, "Boolean")
       );
 
     // Example: a && b && c && <div />, where all operands are boolean
@@ -81,27 +119,18 @@ const checkBooleanValidity = (
 
     case "Identifier": {
       const variable = findVariable(scope, node.name);
-      if (!variable) return false;
-
       // `var a = a;` resolves to itself, so bail before following it again.
-      if (seen.has(variable)) return false;
+      if (!variable || seen.has(variable)) return false;
 
-      const variableDef = variable.defs.find(isVariableDefinition);
-      if (!variableDef) return false;
-
-      // Any write after the declaration makes the initialiser useless as
-      // evidence: `let a = true; a = 0;` isn't a boolean by the time it's used.
-      const isReassigned = variable.references.some(
-        (reference) => reference.isWrite() && !reference.init,
-      );
-      if (isReassigned) return false;
+      const definition = evidenceFor(variable);
+      if (!definition) return false;
 
       seen.add(variable);
       // Resolve the initialiser from where the variable was declared, so an
       // unrelated binding that shadows the same name at the use site can't be
       // mistaken for it.
       const isBoolean = checkBooleanValidity(
-        variableDef.node.init,
+        definition.node.init,
         variable.scope,
         seen,
       );
@@ -179,6 +208,12 @@ const rule: Rule.RuleModule = {
           node,
           messageId: "booleanConversion",
           fix(fixer) {
+            // The fix writes `Boolean(…)`, so it is only a fix where that name
+            // is the global. Under a shadow the same text calls the shadow, the
+            // report survives, and `--fix` nests the call once per pass until
+            // it gives up. The report stands on its own instead.
+            if (isShadowed(scope, "Boolean")) return null;
+
             const text = sourceCode.getText(left);
 
             // A comma expression would split into separate arguments inside

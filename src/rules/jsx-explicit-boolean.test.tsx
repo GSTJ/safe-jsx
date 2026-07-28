@@ -60,6 +60,17 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
     // seeing `a` on the left must not poison `a` on the right.
     { code: "const a = true; (a && a) && <div />;" },
     { code: "const a = true; a && <>{a}</>;" },
+
+    // A shadow that does not reach the call site leaves the global alone.
+    {
+      code: "const C = () => { const Boolean = (x) => x; return Boolean; }; const a = 0; Boolean(a) && <div />;",
+    },
+    // `Boolean` declared as a global rather than in the file is still the
+    // global: it resolves to a variable with no defs.
+    {
+      code: "const a = 0; Boolean(a) && <div />;",
+      languageOptions: { globals: { Boolean: "readonly" } },
+    },
   ],
   invalid: [
     // Conditional expressions
@@ -210,6 +221,64 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
       errors: [{ messageId: "booleanConversion" }],
       output:
         "const a = t; const Component = () => { const t = true; return Boolean(a) && <div />; };",
+    },
+
+    // A shadowed `Boolean`. The rule recommends `Boolean(…)` as the guard, so
+    // trusting the name wherever it appears meant a binding that shadows it
+    // turned the guard into whatever that binding does — here, nothing, and
+    // `0` reaches the tree with the rule quiet. `output` is null on all of
+    // these because the fix would write the shadow's name: it would not fix
+    // anything, and `--fix` would nest the call once per pass.
+    {
+      code: "const Boolean = (x) => x; const a = 0; Boolean(a) && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: null,
+    },
+    {
+      code: "function Boolean(x) { return x; } const a = 0; Boolean(a) && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: null,
+    },
+    {
+      code: "import { Boolean } from './shim'; const a = 0; Boolean(a) && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: null,
+    },
+    {
+      code: "const C = (Boolean) => <View>{Boolean(0) && <Text />}</View>;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: null,
+    },
+    {
+      code: "class Boolean { constructor(x) { return x; } } const a = 0; new Boolean(a) && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: null,
+    },
+    // The shadow also stops vouching for a variable that was initialised
+    // through it.
+    {
+      code: "const Boolean = (x) => x; const a = Boolean(0); a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: null,
+    },
+
+    // A destructuring pattern. The declarator's init belongs to the pattern,
+    // not to any one name it binds, and reading it as the binding's value let
+    // a boolean-looking right-hand side vouch for a name it never produced.
+    {
+      code: "const flag = true; const { a } = flag; a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "const flag = true; const { a } = flag; Boolean(a) && <div />;",
+    },
+    {
+      code: "const flag = true; const [a] = flag; a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "const flag = true; const [a] = flag; Boolean(a) && <div />;",
+    },
+    {
+      code: "const { a } = !b; a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "const { a } = !b; Boolean(a) && <div />;",
     },
   ],
 });
