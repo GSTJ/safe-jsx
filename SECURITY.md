@@ -1,11 +1,12 @@
 # Security Policy
 
-## Supported Versions
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.1.x   | :white_check_mark: |
-
 ## Reporting a Vulnerability
 
-Create an issue with the tag "vulnerability" and we will review it with priority.
+Report it privately through GitHub's advisory form:
+https://github.com/GSTJ/safe-jsx/security/advisories/new
+
+Don't open a public issue for a security problem.
+
+## Supported Versions
+
+Fixes ship in a new release off the latest published version. Stay on it; there are no backport branches.

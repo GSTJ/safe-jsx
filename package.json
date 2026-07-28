@@ -25,6 +25,7 @@
   },
   "files": [
     "CHANGELOG.md",
+    "SECURITY.md",
     "lib"
   ],
   "main": "lib/index.js",
