@@ -125,6 +125,12 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
+// `--print` is for looking at the control by hand, which is the only way to
+// judge the section names and ordering. The assertions above cannot.
+if (process.argv.includes("--print")) {
+  console.log(output);
+}
+
 console.log(
   `changelog preset check passed (${COMMITS.length} synthetic commits, 3 breaking)`,
 );
