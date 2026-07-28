@@ -65,11 +65,25 @@ This describes the kind of change that this commit is providing.
 
 - **feat** (new feature for the user, not a new feature for build script)
 - **fix** (bug fix for the user, not a fix to a build script)
-- **docs** (changes to the documentation)
-- **style** (formatting, missing semi colons, etc; no production code change)
+- **perf** (a change that makes the plugin faster)
+- **revert** (undoing an earlier commit)
+- **build** (the build, the tarball contents, or what gets published)
 - **refactor** (refactoring production code, eg. renaming a variable)
+- **chore** (dependency bumps, tooling config; no production code change)
+- **docs** (changes to the documentation)
+- **ci** (workflows and anything else under `.github/`)
+- **style** (formatting, missing semi colons, etc; no production code change)
 - **test** (adding missing tests, refactoring tests; no production code change)
-- **chore** (updating grunt tasks etc; no production code change)
+
+The first eight land in `CHANGELOG.md` under their own heading. `ci`, `style` and
+`test` do not, because nothing they touch can reach the published tarball. Only
+`feat`, `fix`, `perf` and `revert` affect the version bump, so a release built
+entirely from `build` and `chore` commits is still a patch.
+
+That split lives in `tools/changelog-preset.mjs`, and
+`pnpm run changelog:check` renders a synthetic history through it to prove
+nothing silently disappears. Breaking changes are the exception to all of it and
+are never hidden, whatever type they hang off.
 
 #### `<scope>`
 
