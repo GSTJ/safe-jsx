@@ -7,6 +7,20 @@ under their own heading, from either a `!` after the type or a
 Releases up to 1.3.0 are kept as they were published, in
 tools/changelog-history.md.
 
+## [1.3.2](https://github.com/GSTJ/safe-jsx/compare/v1.3.1...v1.3.2) (2026-07-28)
+
+### Bug Fixes
+
+* **deps:** make the eslint peer optional ([0f89f8a](https://github.com/GSTJ/safe-jsx/commit/0f89f8a986749f8c3e46a95b62f2559dc1b849ce))
+
+### Chores
+
+* **changelog:** render the types that can change the tarball ([8303da9](https://github.com/GSTJ/safe-jsx/commit/8303da983839255670aa76a74d5eecff846db00f))
+
+### Documentation
+
+* **contributing:** say which commit types reach the changelog ([32ca7f9](https://github.com/GSTJ/safe-jsx/commit/32ca7f99e0feeb83fa803d75d9e78ff518970862))
+
 ## [1.3.1](https://github.com/GSTJ/safe-jsx/compare/v1.3.0...v1.3.1) (2026-07-28)
 
 ### Bug Fixes
