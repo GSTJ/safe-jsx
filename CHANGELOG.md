@@ -7,6 +7,12 @@ under their own heading, from either a `!` after the type or a
 Releases up to 1.3.0 are kept as they were published, in
 tools/changelog-history.md.
 
+## [1.3.4](https://github.com/GSTJ/safe-jsx/compare/v1.3.3...v1.3.4) (2026-07-28)
+
+### Build System
+
+* keep CHANGELOG.md in the published tarball ([#45](https://github.com/GSTJ/safe-jsx/issues/45)) ([487f5ef](https://github.com/GSTJ/safe-jsx/commit/487f5ef40ddec413d22a647930a6c95bf6e41439)), references [#44](https://github.com/GSTJ/safe-jsx/issues/44)
+
 ## [1.3.3](https://github.com/GSTJ/safe-jsx/compare/v1.3.2...v1.3.3) (2026-07-28)
 
 ### Build System
