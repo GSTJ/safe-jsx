@@ -24,6 +24,7 @@
     "url": "git+https://github.com/GSTJ/safe-jsx.git"
   },
   "files": [
+    "CHANGELOG.md",
     "lib"
   ],
   "main": "lib/index.js",
