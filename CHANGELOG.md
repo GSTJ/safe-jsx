@@ -4,11 +4,41 @@ Generated from conventional commit messages. Breaking changes are collected
 under their own heading, from either a `!` after the type or a
 `BREAKING CHANGE:` footer.
 
+Releases up to 1.3.0 are kept as they were published, in
+tools/changelog-history.md.
+
 ## [1.3.1](https://github.com/GSTJ/safe-jsx/compare/v1.3.0...v1.3.1) (2026-07-28)
 
 ### Bug Fixes
 
 * **release:** stop running oxfmt over the generated CHANGELOG ([0abd1fe](https://github.com/GSTJ/safe-jsx/commit/0abd1fe55f6e883e09a8474dc5eb99d37e086c84))
+
+### Build System
+
+* drop the dev tsconfig from the tarball ([4c41336](https://github.com/GSTJ/safe-jsx/commit/4c413366e289183aca0cb525071aac656f7eeb18))
+* drop the incremental workaround ([b47fc38](https://github.com/GSTJ/safe-jsx/commit/b47fc38afe36b2e59d2ba16b636c127a5863e990))
+* keep dev config out of the tarball and fix the incremental build ([4c4b2a0](https://github.com/GSTJ/safe-jsx/commit/4c4b2a0c543e6b6b99f4266da717ee25dcefa6f3))
+
+### Code Refactoring
+
+* **rules:** make LegacyRuleContext a type alias ([4255fe3](https://github.com/GSTJ/safe-jsx/commit/4255fe3b951a81e66b83fa18c4d61bd9c7cb2e75))
+* type the plugin sources against the strict shared tsconfig ([0bc750f](https://github.com/GSTJ/safe-jsx/commit/0bc750f73b521dda2e4eb644a3e0523fe6a3aba2))
+
+### Chores
+
+* **changelog:** rebuild in the generator's own bullet style ([0f15905](https://github.com/GSTJ/safe-jsx/commit/0f15905c891d68ce524646877263b4a904db7c5e))
+* **config:** adopt the magic oxlint, oxfmt and tsconfig presets ([9423539](https://github.com/GSTJ/safe-jsx/commit/9423539818b9d53d20f82e6e86958997fc4378b7))
+* **config:** build the lint config with extendConfig ([df8f17f](https://github.com/GSTJ/safe-jsx/commit/df8f17f644787744fd714018a5de786b08cbc92e))
+* **deps:** move the magic stack to 1.1.0 ([55f8751](https://github.com/GSTJ/safe-jsx/commit/55f87518849789dde154fc55c2b119e144399a8e))
+* **deps:** move the magic stack to 1.2.0 ([008b298](https://github.com/GSTJ/safe-jsx/commit/008b298024171fae03e1ef2f6da38ed2abd11f6d))
+* **deps:** move to pnpm and swap eslint/prettier tooling for the magic stack ([faceee1](https://github.com/GSTJ/safe-jsx/commit/faceee1310e32e5f4bf91ec3b6122c4e3db0adee))
+* **deps:** replace the deprecated conventional-changelog-cli ([27f1e1e](https://github.com/GSTJ/safe-jsx/commit/27f1e1edb5ccaf1f6436e680ea37044eb56754fa)), references [#33](https://github.com/GSTJ/safe-jsx/issues/33)
+* **renovate:** say what actually sets the typescript ceiling ([11a0f20](https://github.com/GSTJ/safe-jsx/commit/11a0f20f90cc1b4706e3542b99d82c73120dd9c6))
+
+### Documentation
+
+* **config:** correct why this config uses extendConfig ([2fc12b3](https://github.com/GSTJ/safe-jsx/commit/2fc12b383bc9d92ac3c4169dc42b20d5c2fa5410))
+* **config:** say why the eslint-plugin meta rules are not wired up ([9cef61c](https://github.com/GSTJ/safe-jsx/commit/9cef61c8d6c185e555362a94b97872f9c68966fe))
 
 ## [1.3.0](https://github.com/GSTJ/safe-jsx/compare/v1.2.0...v1.3.0) (2026-07-27)
 
