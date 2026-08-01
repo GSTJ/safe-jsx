@@ -58,7 +58,7 @@
     "jest": "^30.4.2",
     "magic-codemods": "^1.1.0",
     "magic-oxfmt-config": "^1.2.0",
-    "magic-oxlint-config": "^1.2.0",
+    "magic-oxlint-config": "^2.0.0",
     "magic-tsconfig": "^1.2.0",
     "oxfmt": "0.61.0",
     "oxlint": "1.76.0",
