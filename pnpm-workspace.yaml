@@ -1,8 +1,3 @@
-# pnpm 11 keeps its settings here rather than in package.json's "pnpm" field.
-
-# jest-resolve ships a native resolver (unrs-resolver) whose install script
-# links the platform binary. Without this, `pnpm install` exits 1 on
-# ERR_PNPM_IGNORED_BUILDS.
 allowBuilds:
   unrs-resolver: true
 
@@ -11,7 +6,7 @@ allowBuilds:
 # until Jest moves those edges forward.
 overrides:
   "brace-expansion@<1.1.17": 1.1.18
-  "brace-expansion@>=2.0.0 <2.1.3": 2.1.4
+  "brace-expansion@>=2.0.0 <2.1.3": 5.0.9
 
 # pnpm refuses packages published more recently than `minimumReleaseAge`.
 # The magic-* stack was published for this migration, so it is younger than the
