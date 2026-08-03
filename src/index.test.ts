@@ -15,6 +15,15 @@ async function lint(code: string) {
   return result;
 }
 
+const aliasChain = (length: number) => {
+  const aliases = Array.from(
+    { length },
+    (_, index) => `const a${index + 1} = a${index};`,
+  ).join("\n");
+
+  return `const a0 = true;\n${aliases}\na${length} && <div />;\n`;
+};
+
 describe("flat config", () => {
   it("exposes the plugin name and version", () => {
     expect(safeJsx.meta.name).toBe("eslint-plugin-safe-jsx");
@@ -33,5 +42,21 @@ describe("flat config", () => {
 
     expect(result.messages).toEqual([]);
     expect(result.output).toBeUndefined();
+  });
+
+  it("handles a deep alias chain without exhausting the call stack", async () => {
+    const result = await lint(aliasChain(5_000));
+
+    expect(result.messages).toEqual([]);
+    expect(result.output).toBeUndefined();
+  });
+
+  it("wraps an alias chain past the evidence budget", async () => {
+    const result = await lint(aliasChain(10_001));
+
+    expect(result.messages).toEqual([]);
+    expect(result.output).toEqual(
+      expect.stringContaining("Boolean(a10001) && <div />;"),
+    );
   });
 });
