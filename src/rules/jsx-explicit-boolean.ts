@@ -4,6 +4,11 @@ import type { Node } from "estree";
 // Does not include sum or minus, for example, as they don't always evaluate to a boolean
 const binaryExpressionOperators = new Set(["===", "!==", ">", "<", ">=", "<="]);
 
+// ESLint runs this rule against untrusted source, so the evidence walk gets a
+// fixed work budget. On exhaustion it returns false; the caller reports and
+// safely wraps the expression.
+const MAX_BOOLEAN_EVIDENCE_NODES = 10_000;
+
 const findVariable = (
   initialScope: Scope.Scope | null,
   nodeName: string,
@@ -12,7 +17,7 @@ const findVariable = (
 
   // Traverse the scope chain until we find the variable
   while (scope) {
-    const variable = scope.variables.find((v) => v.name === nodeName);
+    const variable = scope.set.get(nodeName);
     if (variable) return variable;
 
     scope = scope.upper;
@@ -64,84 +69,122 @@ const evidenceFor = (variable: Scope.Variable): VariableDefinition | null => {
   return definition;
 };
 
-// `seen` holds the variables on the current resolution path, so a declaration
-// that refers back to itself stops instead of recursing forever.
-const checkBooleanValidity = (
-  node: Node | null | undefined,
-  scope: Scope.Scope | null,
-  seen = new Set<Scope.Variable>(),
+type BooleanCheckFrame =
+  | {
+      kind: "check";
+      node: Node | null | undefined;
+      scope: Scope.Scope | null;
+    }
+  | { kind: "leave"; variable: Scope.Variable };
+
+type BooleanNodeFrame = Extract<BooleanCheckFrame, { kind: "check" }>;
+
+// Each branch mirrors one ESTree node form that this rule accepts.
+const checkBooleanFrame = (
+  frame: BooleanNodeFrame,
+  frames: BooleanCheckFrame[],
+  seen: Set<Scope.Variable>,
 ): boolean => {
   // A declaration can have no initialiser at all: `let a;`, or the binding in
   // `for (const x of xs)`. Both give a null init.
-  if (!node) return false;
+  const current = frame.node;
+  if (!current) return false;
 
-  switch (node.type) {
+  switch (current.type) {
     // Example: !a
     case "UnaryExpression":
-      return node.operator === "!";
+      return current.operator === "!";
 
     // Example: true or false
     case "Literal":
-      return typeof node.value === "boolean";
+      return typeof current.value === "boolean";
 
     // Example: a === b, a !== b, a > b, a < b, a >= b, a <= b
     case "BinaryExpression":
-      return binaryExpressionOperators.has(node.operator);
+      return binaryExpressionOperators.has(current.operator);
 
     // Example: Boolean(a) or new Boolean(a), and only the global one.
     case "CallExpression":
     case "NewExpression":
       return (
-        node.callee.type === "Identifier" &&
-        node.callee.name === "Boolean" &&
-        !isShadowed(scope, "Boolean")
+        current.callee.type === "Identifier" &&
+        current.callee.name === "Boolean" &&
+        !isShadowed(frame.scope, "Boolean")
       );
 
     // Example: a && b && c && <div />, where all operands are boolean
-    case "LogicalExpression": {
-      const { operator, left, right } = node;
-
-      if (operator !== "&&") return false;
-
-      return (
-        checkBooleanValidity(left, scope, seen) &&
-        checkBooleanValidity(right, scope, seen)
+    case "LogicalExpression":
+      if (current.operator !== "&&") return false;
+      frames.push(
+        { kind: "check", node: current.right, scope: frame.scope },
+        { kind: "check", node: current.left, scope: frame.scope },
       );
-    }
+      return true;
 
     // Example: a ? b : c, where both b and c are boolean
     case "ConditionalExpression":
-      return (
-        checkBooleanValidity(node.test, scope, seen) &&
-        checkBooleanValidity(node.consequent, scope, seen) &&
-        checkBooleanValidity(node.alternate, scope, seen)
+      frames.push(
+        { kind: "check", node: current.alternate, scope: frame.scope },
+        { kind: "check", node: current.consequent, scope: frame.scope },
+        { kind: "check", node: current.test, scope: frame.scope },
       );
+      return true;
 
     case "Identifier": {
-      const variable = findVariable(scope, node.name);
-      // `var a = a;` resolves to itself, so bail before following it again.
+      const variable = findVariable(frame.scope, current.name);
+      // `var a = a;` resolves to itself, so stop before following it again.
       if (!variable || seen.has(variable)) return false;
 
       const definition = evidenceFor(variable);
       if (!definition) return false;
 
       seen.add(variable);
-      // Resolve the initialiser from where the variable was declared, so an
-      // unrelated binding that shadows the same name at the use site can't be
-      // mistaken for it.
-      const isBoolean = checkBooleanValidity(
-        definition.node.init,
-        variable.scope,
-        seen,
+      frames.push(
+        { kind: "leave", variable },
+        {
+          kind: "check",
+          node: definition.node.init,
+          // Resolve the initialiser from where the variable was declared, so a
+          // same-named binding at the use site cannot stand in for it.
+          scope: variable.scope,
+        },
       );
-      seen.delete(variable);
-
-      return isBoolean;
+      return true;
     }
 
     default:
       return false;
   }
+};
+
+// `seen` holds the variables on the current resolution path, so a declaration
+// that refers back to itself stops without looping. The explicit stack keeps a
+// long alias chain out of the JavaScript call stack.
+const checkBooleanValidity = (
+  node: Node | null | undefined,
+  scope: Scope.Scope | null,
+): boolean => {
+  const seen = new Set<Scope.Variable>();
+  const frames: BooleanCheckFrame[] = [{ kind: "check", node, scope }];
+  let checkedNodes = 0;
+
+  while (frames.length > 0) {
+    const frame = frames.pop();
+    if (!frame) return false;
+
+    if (frame.kind === "leave") {
+      seen.delete(frame.variable);
+    } else {
+      checkedNodes += 1;
+      if (
+        checkedNodes > MAX_BOOLEAN_EVIDENCE_NODES ||
+        !checkBooleanFrame(frame, frames, seen)
+      )
+        return false;
+    }
+  }
+
+  return true;
 };
 
 /**
