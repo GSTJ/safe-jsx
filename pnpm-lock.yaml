@@ -41,10 +41,10 @@ importers:
         version: 30.4.2(@types/node@26.1.2)(supports-color@8.1.1)
       magic-codemods:
         specifier: ^1.1.0
-        version: 1.1.0
+        version: 1.1.1
       magic-oxfmt-config:
         specifier: ^1.2.0
-        version: 1.2.0(oxfmt@0.61.0)
+        version: 1.2.1(oxfmt@0.61.0)
       magic-oxlint-config:
         specifier: ^2.0.0
         version: 2.0.0(eslint@10.8.0(supports-color@8.1.1))(oxlint@1.76.0)
@@ -1619,13 +1619,13 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  magic-codemods@1.1.0:
-    resolution: {integrity: sha512-u+L9X1yLfZwxwY8lVOpCNgFkzRnFY7TEGahUizkiLgEJyx22jcxRiVKhSj1xz4R469xsRMz4iO5I7VTkY0oP7Q==}
+  magic-codemods@1.1.1:
+    resolution: {integrity: sha512-rFqykNef3SHlr8anVAYiDiIXqw9WNbJ+lsXoLyXGeWOiyUILQNm6csnB1SL92DQiuuyRU7YRHDHOW1+gW0M6ZA==}
     engines: {node: '>=22'}
     hasBin: true
 
-  magic-oxfmt-config@1.2.0:
-    resolution: {integrity: sha512-Wq46MqLnrZTJx1V2nJumdyW8OgA4URnhrfkYx6NYeewQRJAN+wiS1lxu1+5gU6BvlDetmbz7Ol/Xb8sxVXgW3A==}
+  magic-oxfmt-config@1.2.1:
+    resolution: {integrity: sha512-LzvHZAjvEkQwO7iWR0aYDPGveuG5YSou4Vc3zi+eZvLY66IBMI+OtM7pPBY+ODF8zlzZBYLajTgfNB4FGZqZ6Q==}
     engines: {node: '>=22.18.0'}
     hasBin: true
     peerDependencies:
@@ -3803,11 +3803,11 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  magic-codemods@1.1.0:
+  magic-codemods@1.1.1:
     dependencies:
       ts-morph: 28.0.0
 
-  magic-oxfmt-config@1.2.0(oxfmt@0.61.0):
+  magic-oxfmt-config@1.2.1(oxfmt@0.61.0):
     optionalDependencies:
       oxfmt: 0.61.0
 
