@@ -7,6 +7,24 @@ under their own heading, from either a `!` after the type or a
 Releases up to 1.3.0 are kept as they were published, in
 tools/changelog-history.md.
 
+## [1.3.7](https://github.com/GSTJ/safe-jsx/compare/v1.3.6...v1.3.7) (2026-08-04)
+
+### Bug Fixes
+
+* **jsx-explicit-boolean:** bound boolean evidence traversal ([#61](https://github.com/GSTJ/safe-jsx/issues/61)) ([4fc3c98](https://github.com/GSTJ/safe-jsx/commit/4fc3c984e23837a36ffd6e48e017808d60c3d124))
+
+### Chores
+
+* **deps:** lock file maintenance ([#58](https://github.com/GSTJ/safe-jsx/issues/58)) ([1c557ca](https://github.com/GSTJ/safe-jsx/commit/1c557cae041e540a9113cb39cd6595dbf324e1ae))
+* **deps:** patch brace-expansion ([#54](https://github.com/GSTJ/safe-jsx/issues/54)) ([523cb0b](https://github.com/GSTJ/safe-jsx/commit/523cb0b9694092a407845977fc6c0db12e7b7629))
+* **deps:** update dependency @types/node to v26.1.2 ([#50](https://github.com/GSTJ/safe-jsx/issues/50)) ([51d1658](https://github.com/GSTJ/safe-jsx/commit/51d165866e32d95dd4ee54877181a845fb757adc))
+* **deps:** update dependency magic-oxlint-config to v2 ([#52](https://github.com/GSTJ/safe-jsx/issues/52)) ([e267289](https://github.com/GSTJ/safe-jsx/commit/e26728997b64a47d17ed059c5e9cfb6e975404fe))
+* **deps:** update oxc toolchain ([#51](https://github.com/GSTJ/safe-jsx/issues/51)) ([c663647](https://github.com/GSTJ/safe-jsx/commit/c663647626e6f97c7c61f6245120ac5190a6fd1a))
+* **deps:** update pnpm to v11.18.0 ([#53](https://github.com/GSTJ/safe-jsx/issues/53)) ([af4d497](https://github.com/GSTJ/safe-jsx/commit/af4d4979bcb37e43b21a19f1cbde95d245c021f7))
+* **deps:** update pnpm to v11.19.0 ([#59](https://github.com/GSTJ/safe-jsx/issues/59)) ([6e0b5e1](https://github.com/GSTJ/safe-jsx/commit/6e0b5e1dfe18aefdccf62c615a6546f7dbc374af))
+* **deps:** update pnpm/action-setup action to v6 ([#62](https://github.com/GSTJ/safe-jsx/issues/62)) ([2780bc7](https://github.com/GSTJ/safe-jsx/commit/2780bc7ee3c735b8a4bdb40dad8a2128a14ef4fe))
+* **renovate:** keep overrides within major ([#57](https://github.com/GSTJ/safe-jsx/issues/57)) ([a7620f7](https://github.com/GSTJ/safe-jsx/commit/a7620f7a1229ef96abbf36819ab63133608db275))
+
 ## [1.3.6](https://github.com/GSTJ/safe-jsx/compare/v1.3.5...v1.3.6) (2026-07-28)
 
 ### Bug Fixes
