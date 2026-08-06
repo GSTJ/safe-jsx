@@ -7,6 +7,22 @@ under their own heading, from either a `!` after the type or a
 Releases up to 1.3.0 are kept as they were published, in
 tools/changelog-history.md.
 
+## [1.3.8](https://github.com/GSTJ/safe-jsx/compare/v1.3.7...v1.3.8) (2026-08-05)
+
+### Bug Fixes
+
+* **package:** correct the Node engine floor ([#72](https://github.com/GSTJ/safe-jsx/issues/72)) ([fe09789](https://github.com/GSTJ/safe-jsx/commit/fe0978959e9b3f1b92bb66dae5fe7fb28ab3fd99))
+
+### Chores
+
+* **deps:** lock file maintenance ([#70](https://github.com/GSTJ/safe-jsx/issues/70)) ([59d86c3](https://github.com/GSTJ/safe-jsx/commit/59d86c32e328879be750750ac02035d76be03bda))
+* **deps:** quarantine new releases for 14 days ([#71](https://github.com/GSTJ/safe-jsx/issues/71)) ([93dfff1](https://github.com/GSTJ/safe-jsx/commit/93dfff1a3191815877089beb7e838fac1b3a5cdb))
+* **deps:** update dependency @typescript-eslint/parser to v8.66.0 ([#67](https://github.com/GSTJ/safe-jsx/issues/67)) ([e58969d](https://github.com/GSTJ/safe-jsx/commit/e58969d2567103aa91a38363521606e494dd5605))
+* **deps:** update github actions ([#65](https://github.com/GSTJ/safe-jsx/issues/65)) ([d5fe3b1](https://github.com/GSTJ/safe-jsx/commit/d5fe3b1504fad966ffdf2d8b4cb7fde8c11f0068))
+* **deps:** update magic tooling ([#66](https://github.com/GSTJ/safe-jsx/issues/66)) ([35be0bd](https://github.com/GSTJ/safe-jsx/commit/35be0bd931c3e437aad1110fc7836c8cb42d63a7))
+* **deps:** update oxc toolchain ([#68](https://github.com/GSTJ/safe-jsx/issues/68)) ([c61ec9e](https://github.com/GSTJ/safe-jsx/commit/c61ec9e0e6f8b04c0055057c4378e5c3ec284449))
+* **deps:** update pnpm to v11.20.0 ([#69](https://github.com/GSTJ/safe-jsx/issues/69)) ([3bb5ce0](https://github.com/GSTJ/safe-jsx/commit/3bb5ce09f197d36c34924342b7580f0da967eb47))
+
 ## [1.3.7](https://github.com/GSTJ/safe-jsx/compare/v1.3.6...v1.3.7) (2026-08-04)
 
 ### Bug Fixes
