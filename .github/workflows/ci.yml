@@ -18,6 +18,6 @@ jobs:
       # The changelog preset decides which commit types reach CHANGELOG.md, and
       # getting it wrong drops commits silently. This renders a synthetic
       # history through it and fails if a breaking change goes missing.
-      extra-command: pnpm run changelog:check
+      extra-command: pnpm run changelog:check && pnpm run workflow:check
       # Nothing in this repo uses turbo.
       turbo-cache: false

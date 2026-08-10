@@ -38,6 +38,7 @@
     "format:fix": "oxfmt .",
     "typecheck": "tsc --noEmit",
     "test": "jest --coverage",
+    "workflow:check": "node tools/greetings-workflow-check.mjs",
     "prepublish": "not-in-publish || npm run prepublishOnly",
     "prepublishOnly": "safe-publish-latest && npm run lint && npm run test",
     "changelog": "node tools/changelog.mjs",
