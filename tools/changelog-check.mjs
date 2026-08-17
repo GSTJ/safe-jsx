@@ -27,21 +27,17 @@
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+import { env } from "node:process";
+import { pathToFileURL } from "node:url";
 
+import { ConventionalChangelog } from "conventional-changelog";
 import { Bumper } from "conventional-recommended-bump";
 
-import preset, { TYPES } from "./changelog-preset.mjs";
+import preset, { formatCommitDate, TYPES } from "./changelog-preset.mjs";
 
 const here = import.meta.dirname;
 const presetPath = join(here, "changelog-preset.mjs");
-// Resolved rather than assumed to sit at ../node_modules/.bin: pnpm hoists, and
-// in a workspace the binary can land in the root store instead of the package.
-// The package exports no `./package.json`, so resolve its entry point and walk
-// across to the CLI beside it.
-const cliEntry = fileURLToPath(import.meta.resolve("conventional-changelog"));
-const cliPath = join(dirname(cliEntry), "cli", "index.js");
 
 /**
  * What each type is for. `bump` can raise the version, `changelog` renders
@@ -122,7 +118,16 @@ const inThrowawayRepo = async (commits, tag, run) => {
   const repo = mkdtempSync(join(tmpdir(), "safe-jsx-changelog-"));
   /** @param {string[]} args */
   const git = (...args) =>
-    execFileSync("git", args, { cwd: repo, encoding: "utf8", stdio: "pipe" });
+    execFileSync("git", args, {
+      cwd: repo,
+      encoding: "utf8",
+      env: {
+        ...env,
+        GIT_AUTHOR_DATE: "2026-08-05T21:03:25-03:00",
+        GIT_COMMITTER_DATE: "2026-08-05T21:03:25-03:00",
+      },
+      stdio: "pipe",
+    });
 
   try {
     git("init", "--quiet", "--initial-branch", "main");
@@ -162,13 +167,19 @@ const inThrowawayRepo = async (commits, tag, run) => {
  * @returns {Promise<string>}
  */
 const render = (configPath) =>
-  inThrowawayRepo(COMMITS, "after", (repo) =>
-    execFileSync(
-      process.execPath,
-      [cliPath, "--config", configPath, "--release-count", "0", "--stdout"],
-      { cwd: repo, encoding: "utf8", maxBuffer: 16 * 1024 * 1024 },
-    ),
-  );
+  inThrowawayRepo(COMMITS, "after", async (repo) => {
+    const config =
+      /** @type {{ default: Parameters<ConventionalChangelog["config"]>[0] }} */ (
+        await import(pathToFileURL(configPath).href)
+      );
+    const generator = new ConventionalChangelog(repo)
+      .readPackage()
+      .config(config.default)
+      .options({ formatDate: formatCommitDate, releaseCount: 0 });
+    let output = "";
+    for await (const chunk of generator.write()) output += chunk;
+    return output;
+  });
 
 /**
  * The release type conventional-recommended-bump lands on for `commits`, read
@@ -214,6 +225,10 @@ for (const [type, effect] of Object.entries(POLICY)) {
 for (const entry of TYPES) {
   expect(`${entry.type} is covered by the policy`, entry.type in POLICY);
 }
+expect(
+  "release dates keep the calendar day recorded by git",
+  formatCommitDate("2026-08-05 21:03:25 -0300") === "2026-08-05",
+);
 
 /**
  * 2. The rendered output says what the policy says.
@@ -250,7 +265,12 @@ const assessRendering = (output) => {
   return found;
 };
 
-failures.push(...assessRendering(await render(presetPath)));
+const rendered = await render(presetPath);
+failures.push(...assessRendering(rendered));
+expect(
+  "rendered release dates keep the calendar day recorded by git",
+  rendered.includes(" (2026-08-05)"),
+);
 
 // 3. `effect` decides the bump, not just the rendering. The middle case is the
 // one that matters: those four types all render, and none of them may push a

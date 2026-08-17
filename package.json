@@ -37,14 +37,16 @@
     "format": "oxfmt --check .",
     "format:fix": "oxfmt .",
     "typecheck": "tsc --noEmit",
-    "test": "jest --coverage",
+    "test": "jest --coverage && node tools/release-check.mjs",
     "prepublish": "not-in-publish || npm run prepublishOnly",
     "prepublishOnly": "safe-publish-latest && npm run lint && npm run test",
     "changelog": "node tools/changelog.mjs",
     "changelog:check": "node tools/changelog-check.mjs",
     "release-notes": "node tools/release-notes.mjs",
+    "release:check": "node tools/release-check.mjs",
+    "release:tag": "node tools/tag-release.mjs",
     "version": "npm run changelog && git add CHANGELOG.md",
-    "postversion": "node tools/release-notes.mjs > .release-notes && git tag -f -a --cleanup=verbatim \"v$npm_package_version\" -F .release-notes && rm -f .release-notes"
+    "postversion": "npm run release:tag"
   },
   "devDependencies": {
     "@types/estree": "^1.0.9",

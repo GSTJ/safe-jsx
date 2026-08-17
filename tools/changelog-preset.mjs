@@ -30,6 +30,19 @@
 // positive control for that.
 import createPreset from "conventional-changelog-conventionalcommits";
 
+/**
+ * Keeps a tagged release on the calendar date recorded by git. The writer's
+ * default converts offset-aware timestamps to UTC, which can move a late
+ * release into the next day when the changelog is regenerated.
+ *
+ * @param {string | Date} date
+ * @returns {string}
+ */
+export const formatCommitDate = (date) =>
+  typeof date === "string"
+    ? date.slice(0, 10)
+    : date.toISOString().slice(0, 10);
+
 /** @type {import("conventional-changelog-conventionalcommits").CommitType[]} */
 export const TYPES = [
   { type: "feat", section: "Features", effect: "bump" },
@@ -46,4 +59,10 @@ export const TYPES = [
   { type: "test", section: "Tests", effect: "hidden" },
 ];
 
-export default createPreset({ types: TYPES });
+const preset =
+  /** @type {{ writer: { formatDate?: typeof formatCommitDate } }} */ (
+    /** @type {unknown} */ (createPreset({ types: TYPES }))
+  );
+preset.writer.formatDate = formatCommitDate;
+
+export default preset;

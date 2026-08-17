@@ -140,4 +140,25 @@ at all.
 3. Increase the version numbers in any examples files and the README.md to the new version that this Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
 4. You may merge the Pull Request in once you have the sign-off of other developer, or if you do not have permission to do that, you may request the reviewer to merge it for you.
 
+## Releases
+
+Run `npm version patch`, `npm version minor` or `npm version major` on a release
+branch. npm updates the package, rebuilds the changelog, creates the release
+commit and prepares an annotated tag from the same release notes.
+
+Push the branch without `--tags` and merge its PR. From the updated `main`
+branch, run:
+
+```sh
+pnpm run release:tag
+RELEASE_VERSION=$(node -p 'require("./package.json").version')
+git push origin "v${RELEASE_VERSION}"
+```
+
+`release:tag` can move the local tag from the release branch to its squash
+commit while the tag is unpublished. It refuses to change a tag that already
+exists on `origin`. Create the GitHub release from that tag and use the output
+from `pnpm run release-notes` as its body; the release event publishes the npm
+package with provenance.
+
 Thank you for considering contributing to @gstj/safe-jsx!
