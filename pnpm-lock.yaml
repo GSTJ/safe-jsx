@@ -41,7 +41,7 @@ importers:
         version: 30.4.2(@types/node@26.1.2)(supports-color@8.1.1)
       magic-codemods:
         specifier: ^1.1.0
-        version: 1.1.5
+        version: 1.1.6
       magic-oxfmt-config:
         specifier: ^1.2.0
         version: 1.2.5(oxfmt@0.62.0)
@@ -1619,8 +1619,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  magic-codemods@1.1.5:
-    resolution: {integrity: sha512-KszxXtjc4x0iuzlL84kSTlLMncJpQ5blRs8+H8iBO1vulYRegIdtAmwVxLUc195sO+i8o94Kbqszo6tpMDgsxQ==}
+  magic-codemods@1.1.6:
+    resolution: {integrity: sha512-VKxehr24I8YGabylpdvDztWrURkhMZKupdh2Ojfi9ARbq72OxSxw3ed58PT2ihCBA1hxl+2M1F8TDfs0TzZBsw==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -3803,7 +3803,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  magic-codemods@1.1.5:
+  magic-codemods@1.1.6:
     dependencies:
       ts-morph: 28.0.0
 
