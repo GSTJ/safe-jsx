@@ -4,7 +4,7 @@ Generated from conventional commit messages. Breaking changes are collected
 under their own heading, from either a `!` after the type or a
 `BREAKING CHANGE:` footer.
 
-Releases up to 1.3.0 are kept as they were published, in
+Releases up to 1.3.8 are kept as they were published, in
 tools/changelog-history.md.
 
 ## [1.3.8](https://github.com/GSTJ/safe-jsx/compare/v1.3.7...v1.3.8) (2026-08-05)

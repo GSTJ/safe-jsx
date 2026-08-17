@@ -12,15 +12,17 @@
 // 2023 — it also moves 1.0.1's compare link, since the first commit the range
 // starts from changes once chore is visible. Published notes stay as published.
 // Everything above the freeze is still generated from git on every run.
-import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const FROZEN_AT = "1.3.0";
+import { ConventionalChangelog } from "conventional-changelog";
+
+import preset, { formatCommitDate } from "./changelog-preset.mjs";
+
+const FROZEN_AT = "1.3.8";
 
 const here = import.meta.dirname;
 const historyPath = join(here, "changelog-history.md");
-const presetPath = join(here, "changelog-preset.mjs");
 
 const header = `# Changelog
 
@@ -33,20 +35,12 @@ tools/changelog-history.md.
 
 `;
 
-const body = execFileSync(
-  process.platform === "win32" ? "npx.cmd" : "npx",
-  [
-    "conventional-changelog",
-    "--config",
-    presetPath,
-    "--release-count",
-    "0",
-    // Without this the CLI writes CHANGELOG.md itself and leaves stdout empty,
-    // which would skip the header and trip the guard below.
-    "--stdout",
-  ],
-  { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
-);
+const generator = new ConventionalChangelog()
+  .readPackage()
+  .config(preset)
+  .options({ formatDate: formatCommitDate, releaseCount: 0 });
+let body = "";
+for await (const chunk of generator.write()) body += chunk;
 
 if (!body.trim()) {
   console.error(
@@ -68,6 +62,7 @@ if (freezeIndex === -1) {
 
 const generated = body.slice(0, freezeIndex).trim();
 const history = readFileSync(historyPath, "utf8").trim();
+const current = generated ? `${generated}\n\n${history}` : history;
 
-writeFileSync("CHANGELOG.md", `${header + generated}\n\n${history}\n`);
+writeFileSync("CHANGELOG.md", `${header + current}\n`);
 console.log("CHANGELOG.md rebuilt");
