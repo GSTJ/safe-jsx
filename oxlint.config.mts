@@ -25,6 +25,9 @@ export default extendConfig(base, {
   // The preset covers the usual suspects; these two are this repo's own: `lib/`
   // is the published build output, `reports/` is scratch for the release scripts.
   ignorePatterns: ["lib/**", "reports/**"],
+  // oxlint 1.78 adds one-var to the enabled style category. This repo keeps
+  // declarations separate, so the new rule stays off.
+  rules: { "one-var": "off" },
   overrides: [
     {
       // tools/ holds the changelog and release-notes CLIs. Printing to the
