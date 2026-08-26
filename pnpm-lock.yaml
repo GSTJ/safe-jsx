@@ -47,7 +47,7 @@ importers:
         version: 1.2.5(oxfmt@0.63.0)
       magic-oxlint-config:
         specifier: ^2.0.0
-        version: 2.0.4(eslint@10.8.1(supports-color@8.1.1))(oxlint@1.78.0)
+        version: 2.0.5(eslint@10.8.1(supports-color@8.1.1))(oxlint@1.78.0)
       magic-tsconfig:
         specifier: ^1.2.0
         version: 1.2.4
@@ -236,18 +236,6 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
-
-  '@conventional-changelog/git-client@3.1.0':
-    resolution: {integrity: sha512-Tqa/gHco2WJWa740NRjOrfKVvzIqxkZpecb8bemaQ8sKM5PXb1UK4uTyTb/1wIqNuOVaDOFxyBdhTIQZn6gdjQ==}
-    engines: {node: '>=22'}
-    peerDependencies:
-      conventional-commits-filter: ^6.0.1
-      conventional-commits-parser: ^7.0.1
-    peerDependenciesMeta:
-      conventional-commits-filter:
-        optional: true
-      conventional-commits-parser:
-        optional: true
 
   '@conventional-changelog/git-client@3.1.2':
     resolution: {integrity: sha512-jZqwnJwf7nboIlAcw/mkOjVa6DexCcUOgT2oOQgkoi3z9vR8tGFkcMy2BFcYwjhL9sYcDDXkRQDayiDieCoW7A==}
@@ -757,9 +745,6 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
-  '@types/node@26.1.2':
-    resolution: {integrity: sha512-Vu4a5UFA9rIIFJ7rB/Vaafh9lrCQszopTCx6KjFboXTGQbPNasehVR5TEiithSDGyd1DEiUByggTZsg8jukeIg==}
-
   '@types/node@26.2.0':
     resolution: {integrity: sha512-5IviulTZeRNp2vAJ514cc/HUlY5nZ9fCbq9DMyC52BrhFZACo3nI0R7qBxhQmo/d27NFe96ur/b7Wwxklda+kg==}
 
@@ -1194,9 +1179,9 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
 
-  eslint-plugin-safe-jsx@1.3.6:
-    resolution: {integrity: sha512-TuYsCTkLrbRu5lZLtV9C1Ar4zTCyz7tJ3bJXnzrmSI+WNHhWSt3b8GxYaXv7F5m8esQZ5IumY2dwKd6xfIyY7g==}
-    engines: {node: '>=4.0'}
+  eslint-plugin-safe-jsx@1.3.8:
+    resolution: {integrity: sha512-xGCIycmXTctB//ijRxvIIk8YReHu4LS69VcEh6XsOMXrZZAx+pPEoVJ1XkO9M1GnhEN9cC795mBqAkc2g38DAQ==}
+    engines: {node: '>=14.0'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9 || ^10
     peerDependenciesMeta:
@@ -1649,8 +1634,8 @@ packages:
       oxfmt:
         optional: true
 
-  magic-oxlint-config@2.0.4:
-    resolution: {integrity: sha512-urPfrwREQJMIr8ap1dYEAb9XlJPYbypmSzf/2jmFW25CwiSRE6FEbLjW3FKmJEk8kB1UxLH/s7MUbiiaQ++X6w==}
+  magic-oxlint-config@2.0.5:
+    resolution: {integrity: sha512-Du1NHCqBYIyN+Q4F+SClekCovz0rih8OW1Rbwu4RH07/Vq9mYczJHh8/mmuOtczFif1YcS5y9zGp/b1BjX6rLg==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
       oxlint: '>=1.75.0'
@@ -2312,15 +2297,6 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@conventional-changelog/git-client@3.1.0(conventional-commits-filter@6.0.1)(conventional-commits-parser@7.1.2)':
-    dependencies:
-      '@simple-libs/child-process-utils': 2.0.0
-      '@simple-libs/stream-utils': 2.0.0
-      semver: 7.8.5
-    optionalDependencies:
-      conventional-commits-filter: 6.0.1
-      conventional-commits-parser: 7.1.2
-
   '@conventional-changelog/git-client@3.1.2(conventional-commits-filter@6.0.1)(conventional-commits-parser@7.1.2)':
     dependencies:
       '@simple-libs/child-process-utils': 2.0.0
@@ -2500,7 +2476,7 @@ snapshots:
 
   '@jest/pattern@30.4.0':
     dependencies:
-      '@types/node': 26.1.2
+      '@types/node': 26.2.0
       jest-regex-util: 30.4.0
 
   '@jest/reporters@30.4.1(supports-color@8.1.1)':
@@ -2587,7 +2563,7 @@ snapshots:
       '@jest/schemas': 30.4.1
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 26.1.2
+      '@types/node': 26.2.0
       '@types/yargs': 17.0.35
       chalk: 4.1.2
 
@@ -2811,10 +2787,6 @@ snapshots:
       pretty-format: 30.4.1
 
   '@types/json-schema@7.0.15': {}
-
-  '@types/node@26.1.2':
-    dependencies:
-      undici-types: 8.3.0
 
   '@types/node@26.2.0':
     dependencies:
@@ -3156,7 +3128,7 @@ snapshots:
 
   conventional-recommended-bump@12.1.0:
     dependencies:
-      '@conventional-changelog/git-client': 3.1.0(conventional-commits-filter@6.0.1)(conventional-commits-parser@7.1.2)
+      '@conventional-changelog/git-client': 3.1.2(conventional-commits-filter@6.0.1)(conventional-commits-parser@7.1.2)
       argue-cli: 3.1.0
       conventional-changelog-preset-loader: 6.0.1
       conventional-commits-filter: 6.0.1
@@ -3204,7 +3176,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-plugin-safe-jsx@1.3.6(eslint@10.8.1(supports-color@8.1.1)):
+  eslint-plugin-safe-jsx@1.3.8(eslint@10.8.1(supports-color@8.1.1)):
     optionalDependencies:
       eslint: 10.8.1(supports-color@8.1.1)
 
@@ -3584,7 +3556,7 @@ snapshots:
   jest-haste-map@30.4.1:
     dependencies:
       '@jest/types': 30.4.1
-      '@types/node': 26.1.2
+      '@types/node': 26.2.0
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -3734,7 +3706,7 @@ snapshots:
   jest-util@30.4.1:
     dependencies:
       '@jest/types': 30.4.1
-      '@types/node': 26.1.2
+      '@types/node': 26.2.0
       chalk: 4.1.2
       ci-info: 4.4.0
       graceful-fs: 4.2.11
@@ -3762,7 +3734,7 @@ snapshots:
 
   jest-worker@30.4.1:
     dependencies:
-      '@types/node': 26.1.2
+      '@types/node': 26.2.0
       '@ungap/structured-clone': 1.3.3
       jest-util: 30.4.1
       merge-stream: 2.0.0
@@ -3839,9 +3811,9 @@ snapshots:
     optionalDependencies:
       oxfmt: 0.63.0
 
-  magic-oxlint-config@2.0.4(eslint@10.8.1(supports-color@8.1.1))(oxlint@1.78.0):
+  magic-oxlint-config@2.0.5(eslint@10.8.1(supports-color@8.1.1))(oxlint@1.78.0):
     dependencies:
-      eslint-plugin-safe-jsx: 1.3.6(eslint@10.8.1(supports-color@8.1.1))
+      eslint-plugin-safe-jsx: 1.3.8(eslint@10.8.1(supports-color@8.1.1))
       magic-oxlint-plugin: 1.2.4(oxlint@1.78.0)
     optionalDependencies:
       oxlint: 1.78.0
