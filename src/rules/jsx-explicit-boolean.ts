@@ -29,29 +29,43 @@ const findVariable = (
 /** A `const a = …` binding — the only definition kind that carries an initialiser. */
 type VariableDefinition = Extract<Scope.Definition, { type: "Variable" }>;
 
+type VariableEvidence = {
+  definition: VariableDefinition;
+  scope: Scope.Scope;
+};
+
 const isVariableDefinition = (
   definition: Scope.Definition,
 ): definition is VariableDefinition => definition.type === "Variable";
 
-// `Boolean(…)` is trusted by name, which is only sound while the name is the
-// global. `const Boolean = (x) => x` turns the very escape hatch this rule
-// recommends into a no-op, and the rule would bless `Boolean(0) && <Text />`.
-//
-// A global supplied through `languageOptions.globals` resolves to a variable
-// with no defs, so the presence of a def is what separates a binding written in
-// this file from the built-in.
-const isShadowed = (scope: Scope.Scope | null, name: string): boolean => {
-  const variable = findVariable(scope, name);
-  return variable !== null && variable.defs.length > 0;
+// `Boolean(…)` is trusted by name, which is only sound while the name still
+// refers to the built-in. A local definition shadows it, and a direct write can
+// replace even a global supplied through `languageOptions.globals`.
+const isUnsafeBoolean = (
+  scope: Scope.Scope | null,
+  hasUnresolvedWrite: boolean,
+): boolean => {
+  if (hasUnresolvedWrite) return true;
+
+  const variable = findVariable(scope, "Boolean");
+  return (
+    variable !== null &&
+    (variable.defs.length > 0 ||
+      variable.references.some((reference) => reference.isWrite()))
+  );
 };
 
 /**
  * The declaration whose initialiser can stand in for `variable`, or null when
  * nothing about the binding makes that initialiser evidence of anything.
  */
-const evidenceFor = (variable: Scope.Variable): VariableDefinition | null => {
-  const definition = variable.defs.find(isVariableDefinition);
-  if (!definition) return null;
+const evidenceFor = (variable: Scope.Variable): VariableEvidence | null => {
+  const [definition, redeclaration] =
+    variable.defs.filter(isVariableDefinition);
+  // Every declaration initializer is marked as an initial write. With two
+  // `var` declarations, ignoring initial writes lets the first initializer
+  // vouch for a later value, so ambiguous redeclarations fail closed.
+  if (!definition || redeclaration) return null;
 
   // Only a plain `const a = …` binds the initialiser to the name. In
   // `const { a } = flag` the declarator's init is `flag`, which says nothing
@@ -59,14 +73,19 @@ const evidenceFor = (variable: Scope.Variable): VariableDefinition | null => {
   // vouch for a binding it never produced.
   if (definition.node.id.type !== "Identifier") return null;
 
-  // Any write after the declaration makes the initialiser useless as evidence:
-  // `let a = true; a = 0;` isn't a boolean by the time it's used.
+  const initialWrite = variable.references.find(
+    (reference) => reference.init && reference.identifier === definition.name,
+  );
+  if (!initialWrite) return null;
+
+  // Any other write makes the initialiser useless as evidence: `let a = true;
+  // a = 0;` is not boolean by the time it is used.
   const isReassigned = variable.references.some(
-    (reference) => reference.isWrite() && !reference.init,
+    (reference) => reference !== initialWrite && reference.isWrite(),
   );
   if (isReassigned) return null;
 
-  return definition;
+  return { definition, scope: initialWrite.from };
 };
 
 type BooleanCheckFrame =
@@ -84,6 +103,7 @@ const checkBooleanFrame = (
   frame: BooleanNodeFrame,
   frames: BooleanCheckFrame[],
   seen: Set<Scope.Variable>,
+  hasUnresolvedBooleanWrite: boolean,
 ): boolean => {
   // A declaration can have no initialiser at all: `let a;`, or the binding in
   // `for (const x of xs)`. Both give a null init.
@@ -109,7 +129,7 @@ const checkBooleanFrame = (
       return (
         current.callee.type === "Identifier" &&
         current.callee.name === "Boolean" &&
-        !isShadowed(frame.scope, "Boolean")
+        !isUnsafeBoolean(frame.scope, hasUnresolvedBooleanWrite)
       );
 
     // Example: a && b && c && <div />, where all operands are boolean
@@ -135,18 +155,19 @@ const checkBooleanFrame = (
       // `var a = a;` resolves to itself, so stop before following it again.
       if (!variable || seen.has(variable)) return false;
 
-      const definition = evidenceFor(variable);
-      if (!definition) return false;
+      const evidence = evidenceFor(variable);
+      if (!evidence) return false;
 
       seen.add(variable);
       frames.push(
         { kind: "leave", variable },
         {
           kind: "check",
-          node: definition.node.init,
+          node: evidence.definition.node.init,
           // Resolve the initialiser from where the variable was declared, so a
-          // same-named binding at the use site cannot stand in for it.
-          scope: variable.scope,
+          // block-scoped binding at either the declaration or use site cannot
+          // stand in for it.
+          scope: evidence.scope,
         },
       );
       return true;
@@ -163,6 +184,7 @@ const checkBooleanFrame = (
 const checkBooleanValidity = (
   node: Node | null | undefined,
   scope: Scope.Scope | null,
+  hasUnresolvedBooleanWrite: boolean,
 ): boolean => {
   const seen = new Set<Scope.Variable>();
   const frames: BooleanCheckFrame[] = [{ kind: "check", node, scope }];
@@ -178,7 +200,7 @@ const checkBooleanValidity = (
       checkedNodes += 1;
       if (
         checkedNodes > MAX_BOOLEAN_EVIDENCE_NODES ||
-        !checkBooleanFrame(frame, frames, seen)
+        !checkBooleanFrame(frame, frames, seen, hasUnresolvedBooleanWrite)
       )
         return false;
     }
@@ -225,6 +247,14 @@ const rule: Rule.RuleModule = {
   },
   create(context) {
     const sourceCode = getSourceCode(context);
+    // Without an explicit globals declaration, references to the built-in live
+    // in the global scope's `through` list. Scan it once so a direct assignment
+    // cannot turn every later `Boolean(…)` guard into a no-op.
+    const hasUnresolvedBooleanWrite =
+      sourceCode.scopeManager?.globalScope?.through.some(
+        (reference) =>
+          reference.identifier.name === "Boolean" && reference.isWrite(),
+      ) ?? false;
 
     return {
       LogicalExpression(node) {
@@ -243,7 +273,11 @@ const rule: Rule.RuleModule = {
         // Check if it's a valid boolean usage, otherwise it must be fixed
         const scope = getScope(context, sourceCode, node);
 
-        const isSafeBooleanUsage = checkBooleanValidity(left, scope);
+        const isSafeBooleanUsage = checkBooleanValidity(
+          left,
+          scope,
+          hasUnresolvedBooleanWrite,
+        );
         if (isSafeBooleanUsage) return;
 
         // Report the error and fix it
@@ -251,13 +285,12 @@ const rule: Rule.RuleModule = {
           node,
           messageId: "booleanConversion",
           fix(fixer) {
-            // The fix writes `Boolean(…)`, so it is only a fix where that name
-            // is the global. Under a shadow the same text calls the shadow, the
-            // report survives, and `--fix` nests the call once per pass until
-            // it gives up. The report stands on its own instead.
-            if (isShadowed(scope, "Boolean")) return null;
-
             const text = sourceCode.getText(left);
+
+            // `!!` does not depend on a mutable name, so it remains a safe fix
+            // when this file shadows or writes to the global Boolean.
+            if (isUnsafeBoolean(scope, hasUnresolvedBooleanWrite))
+              return fixer.replaceText(left, `!!(${text})`);
 
             // A comma expression would split into separate arguments inside
             // Boolean(), which then tests the first operand instead of the

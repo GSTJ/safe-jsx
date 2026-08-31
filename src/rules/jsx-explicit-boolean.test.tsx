@@ -23,6 +23,9 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
 
     // Scope of variables
     { code: "const a = true; const Component = () => a && <div />;" },
+    {
+      code: "const flag = 0; { const flag = true; var a = flag; } a && <div />;",
+    },
 
     // Rest
     { code: "const a = true; a && <div />;" },
@@ -191,6 +194,23 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
       errors: [{ messageId: "booleanConversion" }],
       output: "let a = true; const b = a; a = 0; Boolean(b) && <div />;",
     },
+    // A second `var` initializer is another write, even though eslint-scope
+    // marks declaration writes as initial. The first declaration cannot vouch
+    // for the value left by the second one.
+    {
+      code: "var a = true; var a = 0; a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "var a = true; var a = 0; Boolean(a) && <div />;",
+    },
+
+    // A `var` binding belongs to the function or module scope, but its
+    // initializer still resolves names from the block where it appears.
+    {
+      code: "const flag = true; { const flag = 0; var a = flag; } a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output:
+        "const flag = true; { const flag = 0; var a = flag; } Boolean(a) && <div />;",
+    },
 
     // Fragments render the falsy left-hand value just like elements do, and
     // used to be skipped entirely.
@@ -226,40 +246,60 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
     // A shadowed `Boolean`. The rule recommends `Boolean(…)` as the guard, so
     // trusting the name wherever it appears meant a binding that shadows it
     // turned the guard into whatever that binding does — here, nothing, and
-    // `0` reaches the tree with the rule quiet. `output` is null on all of
-    // these because the fix would write the shadow's name: it would not fix
-    // anything, and `--fix` would nest the call once per pass.
+    // `0` reaches the tree with the rule quiet. The fixer uses `!!` because
+    // calling the same name would keep the bypass in place.
     {
       code: "const Boolean = (x) => x; const a = 0; Boolean(a) && <div />;",
       errors: [{ messageId: "booleanConversion" }],
-      output: null,
+      output:
+        "const Boolean = (x) => x; const a = 0; !!(Boolean(a)) && <div />;",
     },
     {
       code: "function Boolean(x) { return x; } const a = 0; Boolean(a) && <div />;",
       errors: [{ messageId: "booleanConversion" }],
-      output: null,
+      output:
+        "function Boolean(x) { return x; } const a = 0; !!(Boolean(a)) && <div />;",
     },
     {
       code: "import { Boolean } from './shim'; const a = 0; Boolean(a) && <div />;",
       errors: [{ messageId: "booleanConversion" }],
-      output: null,
+      output:
+        "import { Boolean } from './shim'; const a = 0; !!(Boolean(a)) && <div />;",
     },
     {
       code: "const C = (Boolean) => <View>{Boolean(0) && <Text />}</View>;",
       errors: [{ messageId: "booleanConversion" }],
-      output: null,
+      output:
+        "const C = (Boolean) => <View>{!!(Boolean(0)) && <Text />}</View>;",
     },
     {
       code: "class Boolean { constructor(x) { return x; } } const a = 0; new Boolean(a) && <div />;",
       errors: [{ messageId: "booleanConversion" }],
-      output: null,
+      output:
+        "class Boolean { constructor(x) { return x; } } const a = 0; !!(new Boolean(a)) && <div />;",
+    },
+    // The built-in can also be replaced with a direct global write. This form
+    // resolves through a configured global; the next one stays unresolved in
+    // eslint-scope. Neither call is evidence of a boolean, and using the same
+    // name for an autofix would keep the bypass in place.
+    {
+      code: "Boolean = (x) => x; Boolean(0) && <div />;",
+      languageOptions: { globals: { Boolean: "writable" } },
+      errors: [{ messageId: "booleanConversion" }],
+      output: "Boolean = (x) => x; !!(Boolean(0)) && <div />;",
+    },
+    {
+      code: "Boolean = (x) => x; const a = Boolean(0); a && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "Boolean = (x) => x; const a = Boolean(0); !!(a) && <div />;",
     },
     // The shadow also stops vouching for a variable that was initialised
     // through it.
     {
       code: "const Boolean = (x) => x; const a = Boolean(0); a && <div />;",
       errors: [{ messageId: "booleanConversion" }],
-      output: null,
+      output:
+        "const Boolean = (x) => x; const a = Boolean(0); !!(a) && <div />;",
     },
 
     // A destructuring pattern. The declarator's init belongs to the pattern,
