@@ -7,6 +7,21 @@ under their own heading, from either a `!` after the type or a
 Releases up to 1.3.8 are kept as they were published, in
 tools/changelog-history.md.
 
+## [1.3.9](https://github.com/GSTJ/safe-jsx/compare/v1.3.8...v1.3.9) (2026-08-31)
+
+### Bug Fixes
+
+* **release:** fail closed on local tooling ([#77](https://github.com/GSTJ/safe-jsx/issues/77)) ([13b117b](https://github.com/GSTJ/safe-jsx/commit/13b117b450adf374602143b2afbfb015e4a5a8b0))
+* **release:** isolate npm publish credentials ([#82](https://github.com/GSTJ/safe-jsx/issues/82)) ([b10d395](https://github.com/GSTJ/safe-jsx/commit/b10d3958c44d9a137f94c0a5d9e72a8eaae94f4d))
+* **rule:** close mutable boolean bypasses ([#81](https://github.com/GSTJ/safe-jsx/issues/81)) ([481ccdc](https://github.com/GSTJ/safe-jsx/commit/481ccdc3d15c91e6aff073e98808842a0fd73f40))
+
+### Chores
+
+* **deps:** refresh eligible tooling ([#79](https://github.com/GSTJ/safe-jsx/issues/79)) ([49d33f1](https://github.com/GSTJ/safe-jsx/commit/49d33f1c5d36609348d61c7526fff6c0c7ecd2e2))
+* **deps:** update magic tooling ([#74](https://github.com/GSTJ/safe-jsx/issues/74)) ([3bfe8d0](https://github.com/GSTJ/safe-jsx/commit/3bfe8d05a928bc8dc472da6ebd9b7356e8a6e524))
+* **deps:** update magic tooling ([#78](https://github.com/GSTJ/safe-jsx/issues/78)) ([c0a6cbf](https://github.com/GSTJ/safe-jsx/commit/c0a6cbf292f18c84760a0ada68ec79ae2d86b0cf))
+* **deps:** update magic tooling ([#80](https://github.com/GSTJ/safe-jsx/issues/80)) ([cbc0f64](https://github.com/GSTJ/safe-jsx/commit/cbc0f64bd779c8cdd021b83fc69ff2b9160ec5c1))
+
 ## [1.3.8](https://github.com/GSTJ/safe-jsx/compare/v1.3.7...v1.3.8) (2026-08-05)
 
 ### Bug Fixes
