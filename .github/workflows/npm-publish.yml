@@ -1,6 +1,5 @@
-# Publishes to npm when a GitHub release is created.
-# `npm publish` gates itself: prepack runs the build, prepublishOnly runs lint + tests.
-# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
+# Builds and verifies the release without npm credentials, then gives the
+# publish command the token only after it receives the finished tarball.
 
 name: Node.js Package
 
@@ -9,20 +8,82 @@ on:
     types: [created]
 
 jobs:
-  publish-npm:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
+    outputs:
+      package-sha: ${{ steps.package.outputs.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: main
+      - name: Verify release source
+        env:
+          RELEASE_BODY: ${{ github.event.release.body }}
+          RELEASE_REF: ${{ github.ref }}
+          RELEASE_SHA: ${{ github.sha }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          node tools/publish-check.mjs
+          release_commit=$(git rev-parse "refs/tags/${RELEASE_TAG}^{commit}")
+          git switch --detach "$release_commit"
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org/
       - run: pnpm install --frozen-lockfile
-      - run: npm publish --access public --provenance
+      - name: Test and pack
+        run: |
+          pnpm exec safe-publish-latest --force-in-publish
+          pnpm run lint
+          pnpm run format
+          pnpm run typecheck
+          pnpm run test
+          pnpm run build
+          mkdir release-artifact
+          npm pack --ignore-scripts --pack-destination release-artifact
+      - name: Record package digest
+        id: package
+        run: |
+          shopt -s nullglob
+          packages=(release-artifact/*.tgz)
+          test "${#packages[@]}" -eq 1
+          echo "sha=$(sha256sum "${packages[0]}" | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: npm-package
+          path: release-artifact/*.tgz
+          if-no-files-found: error
+          retention-days: 1
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: npm-package
+          path: release-artifact
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org/
+      - name: Verify package digest
+        env:
+          EXPECTED_SHA: ${{ needs.build.outputs.package-sha }}
+        run: |
+          shopt -s nullglob
+          packages=(release-artifact/*.tgz)
+          test "${#packages[@]}" -eq 1
+          echo "$EXPECTED_SHA  ${packages[0]}" | sha256sum --check --strict
+      - name: Publish to npm
+        run: npm publish ./release-artifact/*.tgz --access public --provenance --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}

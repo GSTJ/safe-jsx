@@ -19,6 +19,7 @@ const here = import.meta.dirname;
 const root = dirname(here);
 const changelogPath = join(here, "changelog.mjs");
 const changelogPresetPath = join(here, "changelog-preset.mjs");
+const publishCheckPath = join(here, "publish-check.mjs");
 const tagReleasePath = join(here, "tag-release.mjs");
 
 /**
@@ -54,6 +55,39 @@ const runTagRelease = (repo) =>
     encoding: "utf8",
     timeout: 30_000,
   });
+
+/**
+ * @param {string} repo
+ * @param {string} releaseTag
+ * @param {string} [mainRef]
+ * @param {string} [releaseBody]
+ * @param {string} [releaseSha]
+ */
+const runPublishCheck = (
+  repo,
+  releaseTag,
+  mainRef = "refs/heads/main",
+  releaseBody = "## [1.3.9] (2026-08-17)\n\n* secure the release tools\n",
+  releaseSha = git(
+    repo,
+    "rev-parse",
+    `refs/tags/${releaseTag}^{commit}`,
+  ).trim(),
+) => {
+  return spawnSync(process.execPath, [publishCheckPath], {
+    cwd: repo,
+    encoding: "utf8",
+    env: {
+      ...env,
+      RELEASE_BODY: releaseBody,
+      RELEASE_MAIN_REF: mainRef,
+      RELEASE_REF: `refs/tags/${releaseTag}`,
+      RELEASE_SHA: releaseSha,
+      RELEASE_TAG: releaseTag,
+    },
+    timeout: 30_000,
+  });
+};
 
 /**
  * @param {string} repo
@@ -255,6 +289,119 @@ const checks = [
         assert.notEqual(result.status, 0);
         assert.match(result.stderr, /unexpected annotation/u);
         assert.equal(tagObject(repo, "v1.3.9"), originalObject);
+      }),
+  ],
+  [
+    "publish accepts the matching annotated tag on main",
+    () =>
+      inTempDir((directory) => {
+        const repo = initReleaseRepo(directory);
+        const tagResult = runTagRelease(repo);
+        assert.equal(tagResult.status, 0, tagResult.stderr);
+
+        const result = runPublishCheck(repo, "v1.3.9");
+        assert.equal(result.status, 0, result.stderr);
+        assert.match(result.stdout, /annotated, documented/u);
+      }),
+  ],
+  [
+    "publish rejects a tag that does not match package.json",
+    () =>
+      inTempDir((directory) => {
+        const repo = initReleaseRepo(directory);
+        git(repo, "tag", "-a", "v1.3.8", "-m", "old name, new files");
+        const result = runPublishCheck(repo, "v1.3.8");
+        assert.notEqual(result.status, 0);
+        assert.match(result.stderr, /instead of v1\.3\.9/u);
+      }),
+  ],
+  [
+    "publish rejects a tag moved after the release event",
+    () =>
+      inTempDir((directory) => {
+        const repo = initReleaseRepo(directory);
+        const tagResult = runTagRelease(repo);
+        assert.equal(tagResult.status, 0, tagResult.stderr);
+        const releaseSha = tagTarget(repo, "v1.3.9");
+
+        git(repo, "tag", "--delete", "v1.3.9");
+        git(repo, "commit", "--quiet", "--allow-empty", "-m", "fix: later");
+        git(
+          repo,
+          "tag",
+          "-a",
+          "v1.3.9",
+          "-m",
+          "## [1.3.9] (2026-08-17)\n\n* secure the release tools",
+        );
+
+        const result = runPublishCheck(
+          repo,
+          "v1.3.9",
+          "refs/heads/main",
+          undefined,
+          releaseSha,
+        );
+        assert.notEqual(result.status, 0);
+        assert.match(result.stderr, /moved after the release event/u);
+      }),
+  ],
+  [
+    "publish rejects release notes that drift from the changelog",
+    () =>
+      inTempDir((directory) => {
+        const repo = initReleaseRepo(directory);
+        const tagResult = runTagRelease(repo);
+        assert.equal(tagResult.status, 0, tagResult.stderr);
+
+        const result = runPublishCheck(
+          repo,
+          "v1.3.9",
+          "refs/heads/main",
+          "## [1.3.9] (2026-08-17)\n\n* different notes\n",
+        );
+        assert.notEqual(result.status, 0);
+        assert.match(result.stderr, /release notes do not match/u);
+      }),
+  ],
+  [
+    "publish rejects a lightweight release tag",
+    () =>
+      inTempDir((directory) => {
+        const repo = initReleaseRepo(directory);
+        git(repo, "tag", "v1.3.9");
+
+        const result = runPublishCheck(repo, "v1.3.9");
+        assert.notEqual(result.status, 0);
+        assert.match(result.stderr, /not annotated/u);
+      }),
+  ],
+  [
+    "publish rejects a release tag outside main",
+    () =>
+      inTempDir((directory) => {
+        const repo = initReleaseRepo(directory);
+        const tagResult = runTagRelease(repo);
+        assert.equal(tagResult.status, 0, tagResult.stderr);
+        git(repo, "checkout", "--quiet", "--detach");
+        git(repo, "branch", "--force", "main", "HEAD^");
+
+        const result = runPublishCheck(repo, "v1.3.9");
+        assert.notEqual(result.status, 0);
+        assert.match(result.stderr, /not reachable/u);
+      }),
+  ],
+  [
+    "publish accepts a main checkout past the release tag",
+    () =>
+      inTempDir((directory) => {
+        const repo = initReleaseRepo(directory);
+        const tagResult = runTagRelease(repo);
+        assert.equal(tagResult.status, 0, tagResult.stderr);
+        git(repo, "commit", "--quiet", "--allow-empty", "-m", "fix: later");
+
+        const result = runPublishCheck(repo, "v1.3.9");
+        assert.equal(result.status, 0, result.stderr);
       }),
   ],
 ];
