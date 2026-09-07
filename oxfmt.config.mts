@@ -1,4 +1,4 @@
-import base from "magic-oxfmt-config";
+import { base } from "magic-oxfmt-config";
 
 // tools/changelog-history.md holds the releases up to 1.3.0 exactly as they were
 // published, and tools/changelog.mjs pastes it onto the end of every rebuild.
