@@ -1,5 +1,5 @@
 import { extendConfig } from "magic-oxlint-config";
-import base from "magic-oxlint-config/base";
+import { base } from "magic-oxlint-config/base";
 
 // `extendConfig` flattens the preset into one config, so `ignorePatterns` and
 // `plugins` survive — oxlint's own `extends` drops them. 1.2.0 rescued `env`
