@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   ci:
-    uses: GSTJ/magic/.github/workflows/ci.yml@b94d17abfffbd8556d1cad08e0d9e1453d6b3775 # v1.19.7
+    uses: GSTJ/magic/.github/workflows/ci.yml@1ece03be62ce4a75eec2b9680f76819b9e0052fe # v1.19.8
     with:
       node-version: "24"
       build-command: pnpm run build
