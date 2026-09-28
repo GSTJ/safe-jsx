@@ -49,6 +49,12 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
     {
       code: "const index = 1; <View>{index === 0 && <Text />}</View>;",
     },
+    // Every other comparison operator in the rule set also yields a boolean.
+    { code: "const a = 1; const b = 2; a !== b && <div />;" },
+    { code: "const a = 1; const b = 2; a > b && <div />;" },
+    { code: "const a = 1; const b = 2; a < b && <div />;" },
+    { code: "const a = 1; const b = 2; a >= b && <div />;" },
+    { code: "const a = 1; const b = 2; a <= b && <div />;" },
     {
       code: "const a = 1; b = '0'; <View>{!!a && !!b && <Text />}</View>;",
     },
