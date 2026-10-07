@@ -240,6 +240,19 @@ ruleTester.run("jsx-explicit-boolean", require("./jsx-explicit-boolean"), {
       output: "const a = 0, b = 1; (Boolean((a, b))) && <div />;",
     },
 
+    // `||` and `??` never count as boolean evidence, even when both sides
+    // are boolean. The fixer wraps the whole expression instead.
+    {
+      code: "const a = true; const b = false; (a || b) && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "const a = true; const b = false; (Boolean(a || b)) && <div />;",
+    },
+    {
+      code: "const a = 0; const b = 1; (a ?? b) && <div />;",
+      errors: [{ messageId: "booleanConversion" }],
+      output: "const a = 0; const b = 1; (Boolean(a ?? b)) && <div />;",
+    },
+
     // The initialiser resolves from the declaration site, so a shadowing
     // binding at the use site can't vouch for it.
     {
