@@ -20,8 +20,10 @@ overrides:
 # pnpm refuses packages published more recently than `minimumReleaseAge`.
 minimumReleaseAge: 20160
 
-# Exceptions stay version-specific, including first-party tooling.
+# Magic packages are first-party tooling and can move immediately.
+# Third-party security exceptions remain version-specific.
 minimumReleaseAgeExclude:
+  - magic-*
   - minimatch@11.0.1
   - path-scurry@3.0.0
   - glob@14.0.2
