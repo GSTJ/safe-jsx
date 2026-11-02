@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Breaking changes
+
+* Development requires Node.js 24 or newer and the pinned pnpm 12 toolchain. Published plugin support is unchanged.
+
+### Chores
+
+* Refresh dependencies, upgrade modern glob/minimatch consumers for security fixes, and backport deepmerge prototype poisoning protection. Keep the 14-day quarantine with exact security exceptions and fail unmitigated audit findings.
+
 Generated from conventional commit messages. Breaking changes are collected
 under their own heading, from either a `!` after the type or a
 `BREAKING CHANGE:` footer.

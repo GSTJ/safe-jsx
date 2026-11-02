@@ -162,3 +162,26 @@ from `pnpm run release-notes` as its body; the release event publishes the npm
 package with provenance.
 
 Thank you for considering contributing to @gstj/safe-jsx!
+
+## Development dependency security
+
+Use Node.js 24 or newer and the pinned pnpm 12 toolchain for development.
+The published plugin's Node.js and ESLint peer support is unchanged.
+Run `pnpm run audit` to check every installed advisory path and run the
+security regressions. `pnpm audit` remains the raw registry report and still
+reports the locally patched deepmerge version.
+
+The 14-day quarantine remains enabled. Exact exceptions admit minimatch
+11.0.1 (GHSA-g3hv-75wg-m249) and glob 14.0.2 (GHSA-3g3m-2fjr-6pw4).
+Their indispensable dependencies are brace-expansion 5.0.12,
+@isaacs/nonrecursive-glob-match 1.0.1, and path-scurry 3.0.0.
+Scoped overrides cover the installed modern consumers only.
+
+Deepmerge 4.3.1 has no published fixed release for GHSA-gcqx-w48m-w2h4.
+The local patch defines own data properties in all three merge write paths,
+including source, CJS and UMD, preventing the inherited **proto** setter
+from changing the result's prototype. Security checks cover target, source,
+and nested poisoning, arrays, symbols, customMerge and custom array merging.
+The audit control accepts only this advisory at 4.3.1 after checking the
+patch and resolving every reported path to the tested module. New advisory
+IDs, versions, unresolved paths and missing patches fail.
