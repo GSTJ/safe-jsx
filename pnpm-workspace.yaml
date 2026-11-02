@@ -11,6 +11,8 @@ allowBuilds:
 # GHSA-2883-xcg3-v3hh (uncapped CPU use merging empty mappings). Renovate has
 # since moved this override past it to the current major.
 overrides:
+  "minimatch@>=9 <11": 11.0.1
+  "glob@>=10 <14": 14.0.2
   "brace-expansion@<1.1.17": 1.1.21
   "brace-expansion@>=2.0.0 <2.1.3": 2.1.7
   "js-yaml@3.15.1": 5.5.0
@@ -18,10 +20,15 @@ overrides:
 # pnpm refuses packages published more recently than `minimumReleaseAge`.
 minimumReleaseAge: 20160
 
-# magic-* is our first-party tooling, so it can move immediately. Everything
-# else stays version-specific when an existing lockfile needs grandfathering.
+# Magic packages are first-party tooling and can move immediately.
+# Third-party security exceptions remain version-specific.
 minimumReleaseAgeExclude:
   - magic-*
+  - minimatch@11.0.1
+  - path-scurry@3.0.0
+  - glob@14.0.2
+  - brace-expansion@5.0.12
+  - "@isaacs/nonrecursive-glob-match@1.0.1"
   - "@oxlint/binding-android-arm-eabi@1.83.0"
   - "@oxlint/binding-android-arm64@1.83.0"
   - "@oxlint/binding-darwin-arm64@1.83.0"
@@ -134,3 +141,7 @@ minimumReleaseAgeExclude:
   - pnpm@12.5.1
   - tinypool@2.1.2
   - undici-types@8.9.0
+
+# Verified security fixes and their indispensable new dependencies.
+patchedDependencies:
+  deepmerge@4.3.1: patches/deepmerge@4.3.1.patch

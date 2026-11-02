@@ -37,7 +37,7 @@
     "format": "oxfmt --check .",
     "format:fix": "oxfmt .",
     "typecheck": "tsc --noEmit",
-    "test": "jest --coverage && node tools/release-check.mjs",
+    "test": "jest --coverage && node tools/release-check.mjs && node tools/security-check.mjs",
     "prepublish": "not-in-publish || npm run prepublishOnly",
     "prepublishOnly": "safe-publish-latest && npm run lint && npm run test",
     "changelog": "node tools/changelog.mjs",
@@ -46,7 +46,9 @@
     "release:check": "node tools/release-check.mjs",
     "release:tag": "node tools/tag-release.mjs",
     "version": "npm run changelog && git add CHANGELOG.md",
-    "postversion": "npm run release:tag"
+    "postversion": "npm run release:tag",
+    "security:check": "node tools/security-check.mjs",
+    "audit": "node tools/security-audit.mjs"
   },
   "devDependencies": {
     "@types/estree": "^1.0.9",
