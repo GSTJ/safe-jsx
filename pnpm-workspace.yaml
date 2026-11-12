@@ -11,7 +11,7 @@ allowBuilds:
 # GHSA-2883-xcg3-v3hh (uncapped CPU use merging empty mappings). Renovate has
 # since moved this override past it to the current major.
 overrides:
-  "minimatch@>=9 <11": 11.0.2
+  "minimatch@>=9 <11": 11.0.3
   "glob@>=10 <14": 14.0.3
   "brace-expansion@<1.1.17": 1.1.21
   "brace-expansion@>=2.0.0 <2.1.3": 2.1.7
