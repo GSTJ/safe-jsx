@@ -3,7 +3,6 @@ import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   readFileSync,
-  readdirSync,
   mkdtempSync,
   mkdirSync,
   writeFileSync,
@@ -167,23 +166,20 @@ console.log(
 // disposable process so a regression cannot hang the suite itself.
 /** @type {Record<string, string>} */
 const PICOMATCH_HASHES = {
-  "2.3.2": "4b0501b3f04e1a7e67ef90b32dbc8cb383483be034cc8bfdafae002c60bf1b8a",
-  "4.0.7": "a37aea8127ca5f932bcf3ba220efc35dd0fdcbb7a3892a5b0b5ee8feb8af7e22",
+  "2.3.2": "be4f6ac53e953aa6c02e6f6c1773b9d035f9c48ac227bd0587049a3a2d9fe936",
+  "4.0.7": "5c04741270d46b2aa7aaf6797bfa9d0ea3f6e3318200dd3014a9e8db43110a12",
 };
-export const picomatchEntries = new Map();
-for (const version of ["2.3.2", "4.0.7"]) {
-  const base = new URL("../node_modules/.pnpm/", import.meta.url);
-  const dir = readdirSync(base).find((name) =>
-    name.startsWith(`picomatch@${version}_`),
-  );
-  assert.ok(dir, `missing patched picomatch ${version}`);
-  const entry = require.resolve(
-    new URL(`${dir}/node_modules/picomatch/`, base).pathname,
-  );
+const haste = resolveFrom(jestCore, "jest-haste-map");
+const anymatch = resolveFrom(haste, "anymatch");
+const jestUtil = resolveFrom(jestCore, "jest-util");
+export const picomatchEntries = new Map([
+  ["2.3.2", resolveFrom(anymatch, "picomatch")],
+  ["4.0.7", resolveFrom(jestUtil, "picomatch")],
+]);
+for (const [version, entry] of picomatchEntries) {
   const parser = readFileSync(join(dirname(entry), "lib/parse.js"));
   const expected = PICOMATCH_HASHES[version];
   assert.equal(createHash("sha256").update(parser).digest("hex"), expected);
-  picomatchEntries.set(version, entry);
   const probe = spawnSync(
     process.execPath,
     [
@@ -197,6 +193,7 @@ for (const version of ["2.3.2", "4.0.7"]) {
       a.equal(match(glob + 'b'), true);
     }
     a.equal(p('+(a|b)')('abba'), true);
+    a.equal(p('+(*(a))')('aaaa'), true);
     a.equal(p('+([ab])')('abba'), true);
     a.equal(p('src/**/*.ts')('src/a/b.ts'), true);
   `,
