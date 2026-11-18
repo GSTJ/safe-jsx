@@ -185,3 +185,11 @@ and nested poisoning, arrays, symbols, customMerge and custom array merging.
 The audit control accepts only this advisory at 4.3.1 after checking the
 patch and resolving every reported path to the tested module. New advisory
 IDs, versions, unresolved paths and missing patches fail.
+
+Picomatch 2.3.2 and 4.0.7 have no published fix for
+GHSA-fc5q-39xc-vjpf. Local patches apply the parser's existing literal fallback
+to single repeated branches containing wildcard quantifiers. Escaped characters,
+character classes and nested literal extglobs retain their existing handling.
+The security suite checks parser hashes and runs timeout-bounded matcher probes
+for both versions. The audit control resolves every reported dependency path
+to the tested parser; other versions and advisory IDs still fail.

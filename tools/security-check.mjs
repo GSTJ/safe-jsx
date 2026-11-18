@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import {
   readFileSync,
   mkdtempSync,
@@ -9,7 +10,7 @@ import {
 } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { runInThisContext } from "node:vm";
 
 const require = createRequire(import.meta.url);
@@ -159,4 +160,50 @@ try {
 }
 console.log(
   "security regressions passed: deepmerge CJS/UMD, patch coverage, minimatch amplification, glob cancellation and compatibility",
+);
+
+// Verify each locally patched parser, then exercise the public matcher in a
+// disposable process so a regression cannot hang the suite itself.
+const PICOMATCH_HASHES = {
+  "2.3.2": "4b0501b3f04e1a7e67ef90b32dbc8cb383483be034cc8bfdafae002c60bf1b8a",
+  "4.0.7": "a37aea8127ca5f932bcf3ba220efc35dd0fdcbb7a3892a5b0b5ee8feb8af7e22",
+};
+export const picomatchEntries = new Map();
+for (const version of ["2.3.2", "4.0.7"]) {
+  const fs = require("node:fs");
+  const base = new URL("../node_modules/.pnpm/", import.meta.url);
+  const dir = fs
+    .readdirSync(base)
+    .find((name) => name.startsWith(`picomatch@${version}_`));
+  assert.ok(dir, `missing patched picomatch ${version}`);
+  const entry = require.resolve(
+    new URL(`${dir}/node_modules/picomatch/`, base).pathname,
+  );
+  const parser = readFileSync(join(dirname(entry), "lib/parse.js"));
+  const expected = PICOMATCH_HASHES[version];
+  assert.equal(createHash("sha256").update(parser).digest("hex"), expected);
+  picomatchEntries.set(version, entry);
+  const probe = spawnSync(
+    process.execPath,
+    [
+      "-e",
+      `
+    const p = require(${JSON.stringify(entry)});
+    const a = require('node:assert/strict');
+    for (const glob of ['+(*)', '+(*a)', '*(*)', '*(*a)', '+(?*)']) {
+      const match = p(glob + 'b');
+      a.equal(match('a'.repeat(48) + 'c'), false);
+      a.equal(match(glob + 'b'), true);
+    }
+    a.equal(p('+(a|b)')('abba'), true);
+    a.equal(p('+([ab])')('abba'), true);
+    a.equal(p('src/**/*.ts')('src/a/b.ts'), true);
+  `,
+    ],
+    { timeout: 3000, encoding: "utf8" },
+  );
+  assert.equal(probe.status, 0, probe.stderr || String(probe.error));
+}
+console.log(
+  "picomatch single-branch extglob regressions passed on both patched versions",
 );
