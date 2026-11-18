@@ -7,11 +7,22 @@ import { createRequire } from "node:module";
 // deepmerge and picomatch advisories after verifying every reported path.
 import { deepEntry, picomatchEntries } from "./security-check.mjs";
 
+/** @param {string} entry @param {string} name */
+const resolveDependency = (entry, name) => {
+  const localRequire = createRequire(entry);
+  try {
+    return localRequire.resolve(name);
+  } catch {
+    // Type-only packages have no runtime entry but still own dependency edges.
+    return localRequire.resolve(`${name}/package.json`);
+  }
+};
+
 /** @param {string} path */
 const verifyPath = (path) => {
   let entry = new URL("../package.json", import.meta.url).pathname;
   for (const name of path.split(">").slice(1))
-    entry = createRequire(entry).resolve(name);
+    entry = resolveDependency(entry, name);
   assert.equal(
     realpathSync(entry),
     realpathSync(deepEntry),
@@ -45,7 +56,7 @@ const verifyPicomatch = (installed) => {
   for (const path of installed.paths) {
     let entry = new URL("../package.json", import.meta.url).pathname;
     for (const name of path.split(">").slice(1))
-      entry = createRequire(entry).resolve(name);
+      entry = resolveDependency(entry, name);
     assert.equal(
       realpathSync(entry),
       realpathSync(expected),
