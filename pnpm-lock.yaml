@@ -171,8 +171,8 @@ overrides:
 
 patchedDependencies:
   deepmerge@4.3.1: c21a9bf8c2484fbeac67de5d2dab17636e3d4a290ec37832db08d53bb9ff523a
-  picomatch@2.3.2: 3c87c5ad7febfd779fde5832b40af28df90eb0db3af8d458935aef7a72fd7d01
-  picomatch@4.0.7: 8046a28b18662ba4a23260f501b8a43066210c0c2263b491a3e8fd9103a933b5
+  picomatch@2.3.2: e029656914e33dd68ddb56643e67f51adf8c1b242c0ffac31d7e74f7ff2145fa
+  picomatch@4.0.7: cab2b548e5c8a5d139d38c8208b182fff778d2637370c630fe3b61d58e20fd29
 
 importers:
 
@@ -2924,7 +2924,7 @@ snapshots:
       detect-libc: 2.1.2
       is-glob: 4.0.3
       node-addon-api: 7.1.1
-      picomatch: 4.0.7(patch_hash=8046a28b18662ba4a23260f501b8a43066210c0c2263b491a3e8fd9103a933b5)
+      picomatch: 4.0.7(patch_hash=cab2b548e5c8a5d139d38c8208b182fff778d2637370c630fe3b61d58e20fd29)
     optionalDependencies:
       '@parcel/watcher-android-arm64': 2.6.0
       '@parcel/watcher-darwin-arm64': 2.6.0
@@ -3181,7 +3181,7 @@ snapshots:
   anymatch@3.1.3:
     dependencies:
       normalize-path: 3.0.0
-      picomatch: 2.3.2(patch_hash=3c87c5ad7febfd779fde5832b40af28df90eb0db3af8d458935aef7a72fd7d01)
+      picomatch: 2.3.2(patch_hash=e029656914e33dd68ddb56643e67f51adf8c1b242c0ffac31d7e74f7ff2145fa)
 
   argparse@3.0.3: {}
 
@@ -3496,9 +3496,9 @@ snapshots:
     dependencies:
       walk-up-path: 4.0.0
 
-  fdir@6.5.0(picomatch@4.0.7(patch_hash=8046a28b18662ba4a23260f501b8a43066210c0c2263b491a3e8fd9103a933b5)):
+  fdir@6.5.0(picomatch@4.0.7(patch_hash=cab2b548e5c8a5d139d38c8208b182fff778d2637370c630fe3b61d58e20fd29)):
     optionalDependencies:
-      picomatch: 4.0.7(patch_hash=8046a28b18662ba4a23260f501b8a43066210c0c2263b491a3e8fd9103a933b5)
+      picomatch: 4.0.7(patch_hash=cab2b548e5c8a5d139d38c8208b182fff778d2637370c630fe3b61d58e20fd29)
 
   file-entry-cache@11.1.5:
     dependencies:
@@ -3742,12 +3742,12 @@ snapshots:
       '@types/node': 26.6.6
       anymatch: 3.1.3
       fb-watchman: 2.0.4
-      fdir: 6.5.0(picomatch@4.0.7(patch_hash=8046a28b18662ba4a23260f501b8a43066210c0c2263b491a3e8fd9103a933b5))
+      fdir: 6.5.0(picomatch@4.0.7(patch_hash=cab2b548e5c8a5d139d38c8208b182fff778d2637370c630fe3b61d58e20fd29))
       graceful-fs: 4.2.11
       jest-regex-util: 30.5.0
       jest-util: 30.5.1
       jest-worker: 30.5.1
-      picomatch: 4.0.7(patch_hash=8046a28b18662ba4a23260f501b8a43066210c0c2263b491a3e8fd9103a933b5)
+      picomatch: 4.0.7(patch_hash=cab2b548e5c8a5d139d38c8208b182fff778d2637370c630fe3b61d58e20fd29)
 
   jest-leak-detector@30.5.1:
     dependencies:
@@ -3769,7 +3769,7 @@ snapshots:
       chalk: 4.1.2
       graceful-fs: 4.2.11
       jest-util: 30.5.1
-      picomatch: 4.0.7(patch_hash=8046a28b18662ba4a23260f501b8a43066210c0c2263b491a3e8fd9103a933b5)
+      picomatch: 4.0.7(patch_hash=cab2b548e5c8a5d139d38c8208b182fff778d2637370c630fe3b61d58e20fd29)
       pretty-format: 30.5.1
       slash: 3.0.0
       stack-utils: 2.0.6
@@ -3888,7 +3888,7 @@ snapshots:
       chalk: 4.1.2
       ci-info: 4.4.0
       graceful-fs: 4.2.11
-      picomatch: 4.0.7(patch_hash=8046a28b18662ba4a23260f501b8a43066210c0c2263b491a3e8fd9103a933b5)
+      picomatch: 4.0.7(patch_hash=cab2b548e5c8a5d139d38c8208b182fff778d2637370c630fe3b61d58e20fd29)
 
   jest-validate@30.5.1:
     dependencies:
@@ -4137,9 +4137,9 @@ snapshots:
 
   picocolors@1.1.1: {}
 
-  picomatch@2.3.2(patch_hash=3c87c5ad7febfd779fde5832b40af28df90eb0db3af8d458935aef7a72fd7d01): {}
+  picomatch@2.3.2(patch_hash=e029656914e33dd68ddb56643e67f51adf8c1b242c0ffac31d7e74f7ff2145fa): {}
 
-  picomatch@4.0.7(patch_hash=8046a28b18662ba4a23260f501b8a43066210c0c2263b491a3e8fd9103a933b5): {}
+  picomatch@4.0.7(patch_hash=cab2b548e5c8a5d139d38c8208b182fff778d2637370c630fe3b61d58e20fd29): {}
 
   pirates@4.0.7: {}
 
@@ -4250,8 +4250,8 @@ snapshots:
 
   tinyglobby@0.2.17:
     dependencies:
-      fdir: 6.5.0(picomatch@4.0.7(patch_hash=8046a28b18662ba4a23260f501b8a43066210c0c2263b491a3e8fd9103a933b5))
-      picomatch: 4.0.7(patch_hash=8046a28b18662ba4a23260f501b8a43066210c0c2263b491a3e8fd9103a933b5)
+      fdir: 6.5.0(picomatch@4.0.7(patch_hash=cab2b548e5c8a5d139d38c8208b182fff778d2637370c630fe3b61d58e20fd29))
+      picomatch: 4.0.7(patch_hash=cab2b548e5c8a5d139d38c8208b182fff778d2637370c630fe3b61d58e20fd29)
 
   tinypool@2.2.0: {}
 
