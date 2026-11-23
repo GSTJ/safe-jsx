@@ -105,7 +105,23 @@ const bounded = spawnSync(
   process.execPath,
   [
     "-e",
-    `const {Minimatch}=require(${JSON.stringify(minimatchEntry)}); const assert=require('node:assert/strict'); const m=new Minimatch(Array(30).fill('**/../a/b').join('/'),{optimizationLevel:2,braceExpandMax:64}); assert.equal(m.set.length,64); assert.equal(new Minimatch('{x,*}/{0..999}',{optimizationLevel:2}).set.length,2000);`,
+    `const {Minimatch}=require(${JSON.stringify(minimatchEntry)});
+    const assert=require('node:assert/strict');
+    // Upstream now rejects amplification instead of returning a capped set.
+    assert.throws(
+      () => new Minimatch(Array(30).fill('**/../a/b').join('/'),{
+        optimizationLevel:2,braceExpandMax:64
+      }),
+      {name:'RangeError',message:"optimizationLevel 2: too many patterns from '**/..'"}
+    );
+    // Numeric ranges can be compacted without changing matching behavior.
+    const range=new Minimatch('{x,*}/{0..999}',{optimizationLevel:2});
+    for(let value=0;value<1000;value++) {
+      assert.equal(range.match('x/'+value),true);
+      assert.equal(range.match('other/'+value),true);
+    }
+    for(const value of ['-1','1000','09','word'])
+      assert.equal(range.match('x/'+value),false);`,
   ],
   { timeout: 5000, encoding: "utf8" },
 );
