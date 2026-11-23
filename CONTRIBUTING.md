@@ -185,3 +185,20 @@ and nested poisoning, arrays, symbols, customMerge and custom array merging.
 The audit control accepts only this advisory at 4.3.1 after checking the
 patch and resolving every reported path to the tested module. New advisory
 IDs, versions, unresolved paths and missing patches fail.
+
+Picomatch 2.3.2 and 4.0.7 have no published fix for
+GHSA-fc5q-39xc-vjpf. Local patches use the parser's literal fallback for repeated
+wildcard operands and nested grammar that has no proven safe reduction. This
+intentionally narrows repeated extglob support: unproved nested groups and
+alternatives with overlapping initial characters now match literally. Ordinary
+flat disjoint literal alternatives, fixed-width question marks, quoted stars,
+POSIX character classes and the existing single-character star reduction stay
+supported. In 2.3.2, the old star reduction is restricted to one branch because
+its multi-branch form discards alternatives. This affects development tools;
+picomatch is absent from the published plugin's runtime dependencies.
+
+The security suite verifies exact parser hashes and timeout-bounded probes,
+including nested groups, alternatives and different adversarial strings. The
+audit control resolves every reported dependency path to the tested parser;
+other versions and advisory IDs still fail. Raw registry findings remain
+visible. These installed mitigations do not resolve the upstream advisory.
